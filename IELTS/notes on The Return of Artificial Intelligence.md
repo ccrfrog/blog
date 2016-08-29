@@ -26,7 +26,7 @@ rehabilitation n.恢复，平反
 2. first used => launched, coined
 
 ## 长难句分析
-1. A public reared on science-fiction movies and excited by the growing power of computers had high expectations.
++ A public reared on science-fiction movies and excited by the growing power of computers had high expectations.
 
 主语为 a public
 
@@ -38,9 +38,9 @@ a public 可以理解成people
 
 整句的意思是，80年代后的人们由科幻电影培养（伴随着科幻电影）长大，与此同时计算机的能力也在迅猛增长，因此大家对AI有着较高的期望。
 
-2. The effect of repeatedly moving the goal-posts in this way was that AI came to refer to 'blue sky' research that was still years from commercialisation.
++ The effect of repeatedly moving the goal-posts in this way was that AI came to refer to 'blue sky' research that was still years from commercialisation.
 
-goal-posts (足球等运动的)门柱，引申意为AI研究的目标
+goal-posts (足球等运动的)门柱，引申意为AI的研究目标
 
 不断变更目标的效果是，AI成了一门离商业化很远的玄乎学问。
 
@@ -48,7 +48,7 @@ goal-posts (足球等运动的)门柱，引申意为AI研究的目标
 This has ignited public debate about AI.
 
 点燃了公众的争论热情。
-在大作文中议论文用来开头，Recently, the topic of xx seemed ignite the public debate.
+可以在大作文中议论文用来开头，Recently, the topic of xx seemed ignite the public debate.
 
 
 
