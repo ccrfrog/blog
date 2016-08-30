@@ -48,7 +48,7 @@ goal-posts (足球等运动的)门柱，引申意为AI的研究目标
 This has ignited public debate about AI.
 
 点燃了公众的争论热情。
-可以在大作文中议论文用来开头，Recently, the topic of xx seemed ignite the public debate.
+可以在大作文中议论文用来开头，Recently, the topic of xx seems to ignite the public debate.
 
 
 
