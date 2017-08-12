@@ -5,7 +5,7 @@
 
 ## Array
 
-1. TwoSum
+### TwoSum
 
 给定数组nums 和值 target，判断是否存在`nums[i] + nums[j] = target`
 存在返回对应的索引值i, j，否则返回[-1, -1]
@@ -22,6 +22,15 @@
 	} else {
 		map.put(nums[i], i);
 	}
+
+### MoveZeroes
+
+给定一个数组nums，将其中的元素0 移到数组的末尾，保持其它元素的相对顺序不变
+`eg. nums = {0, 1, 0, 3, 12} => {1, 3, 12, 0, 0}` 
+
+要求 in-place：不能copy 数组，操作数尽可能少
+
+* idea: 如果类似快排里的 partition 子程序直接将0 交换到末尾不能保持其它元素的相对顺序，考虑将非0元素移到开头，再将末尾元素置0
 
 
 
