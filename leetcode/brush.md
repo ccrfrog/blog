@@ -30,7 +30,7 @@
 
 要求 in-place：不能copy 数组，操作数尽可能少。函数原型为
 
-	`public void moveZeroes(int[] nums) {}`
+	public void moveZeroes(int[] nums) {}
 
 * idea: 如果类似快排里的 partition 子程序直接将0 交换到末尾不能保持其它元素的相对顺序，考虑将非0元素移到开头，再将末尾元素置0
 
@@ -87,5 +87,124 @@ eg. Given `[1,2,0]` return 3, and `[3,4,-1,1]` return 2
 	public void merge(int[] nums1, int m, int[] nums2, int n) {}
 
 
+### MissingNumber
+给定n个元素的数组，其中的元素取值范围是 0,1, ... n
+找出数组中缺失的元素：n + 1 个元素里出现了 n个。
 
-### 
+	public int missingNumberxor(int[] nums) {}
+
+
+	    public int missingNumberxor(int[] nums) {
+        int xor = 0, i = 0;
+        for (i = 0; i < nums.length; i++) {
+            xor ^= i ^ nums[i];
+        }
+        return xor ^ i;
+    }
+
+### PlusOne
+给定一个由数组表示的 非负整数，例如 328 = [3, 2, 8]，给该数字加1。最高位在最左边
+
+* idea: 从右向左 遇到小于 9的数字+1 返回即可。遇到9 则置为0，待上一位进位。如果数字全部是9 则需升位，数组长度加1
+
+	
+	    public int[] plusOne(int[] digits) {
+	        int n = digits.length;
+	        for (int i = n - 1; i >= 0; i--) {
+	            if (digits[i] < 9) {
+	                digits[i]++;
+	                return digits;
+	            }
+	            digits[i] = 0;
+	        }
+	        int[] newNumber = new int[n + 1];
+	        newNumber[0] = 1;
+	        return newNumber;
+	    }
+
+
+### ProductofArrayExceptSelf
+给定 n 个元素的数组nums，返回一个 output 数组 使得 output[i] 等于 nums中除 nums[i] 之外其它元素的乘积。
+eg. given `[1,2,3,4], return [24,12,8,6]`
+
+* constraints: 不使用 除法操作，时间复杂度为 O(n)
+
+* idea: 对于 nums[i] 如果知道 它左边所有数字的乘积 forward[i]，也知道它右边数字的乘积backward[i]，
+那么 forward[i] * backward[i] 即为目标值。
+使用两个数组，分别求出左边和右边数字的乘积，再遍历 求对应的 target 即可
+
+
+### RemoveDuplicatesfromSortedArray
+给定有序数组nums，去掉其中的重复元素使得每个元素只出现一次，返回新数组的长度。
+eg. given `[1, 1, 2]` return 2，新数组为 `[1, 2]`。
+
+* idea：一遍扫描将非重复元素移到数组左边，j 指向最右边的非重复元素数组，循环结束时返回 `j+1` 即可。
+
+
+	public int removeDuplicates(int[] nums) {}
+
+
+### RemoveElement
+给定一个数组nums 和一个值 val，从nums 里去掉所有 val 元素，返回新数组的长度。
+* constraints: 使用 O(1) 额外空间。
+
+* idea: 一遍扫描将不等于val 的元素移到数组左边，j 指向子数组最右边位置。
+
+
+### RotateArray
+n 个元素的数组向右轮转k 步。例如 `nums = [1, 2, 3, 4, 5, 6, 7]，k = 3`
+返回 `[5, 6, 7, 1, 2, 3, 4]`。
+至少有3种解法，给出尽可能多的解法。期望in place，O(1) 空间。
+
+* idea 1：前n-k 个元素直接copy 到末尾，返回以 n-k 为头的子数组
+* idea 2: 复用reverse 子程序，翻转子数组 [0, n-k]，[n-k, n]，再整体翻转即可
+* idea 3: copy 末尾k 个元素，整体右移 k步，k个元素 copy回头部
+
+
+
+### RotateImage
+n*n 的二维数组，顺时针方向旋转90度
+
+* idea: first reverse up to down, then swap the symmetry(row/column)
+
+
+		1 2 3     7 8 9     7 4 1
+	    4 5 6  => 4 5 6  => 8 5 2
+	    7 8 9     1 2 3     9 6 3
+
+
+### SetMatrixZeroes
+给定m*n 矩阵, 如果其中一个元素是0 将整行和整列都置为0
+
+* idea: 第一遍遍历 matrix 用两个数组 row/column 记下的所有包含0 的行和列。再次遍历 matrix 时`if row[i] == 0 || column[j] == 0 then m[i][j] = 0`
+
+
+### SortColors
+给定由 {0=red, 1=white, 2=blue} 组成的数组nums，排序。
+
+* idea 1: 两遍扫描，第1遍记录0,1 的个数，第2遍先填充0 再填充1 再填充2
+
+
+		Integer zeros = map.getOrDefault(0, 0);
+        Integer ones = map.getOrDefault(1, 0);
+        for (int i = 0; i < nums.length; i++) {
+            nums[i] = zeros-- > 0 ? 0 : (ones-- > 0 ? 1 : 2);
+        }
+
+
+* idea 2: 一遍扫描常量空间，以1 为pivot 元素，将0交换到 开头，将2交换到末尾，需要注意的是 与2交换的也可能是个2 这时候需要i-1 继续处理。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
