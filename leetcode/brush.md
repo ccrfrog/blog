@@ -3,6 +3,12 @@
 
 
 
+## Backtracking
+
+
+
+
+
 ## Array
 
 ### TwoSum
@@ -195,7 +201,24 @@ n*n 的二维数组，顺时针方向旋转90度
 * idea 2: 一遍扫描常量空间，以1 为pivot 元素，将0交换到 开头，将2交换到末尾，需要注意的是 与2交换的也可能是个2 这时候需要i-1 继续处理。
 
 
+### SpiralMatrix
+Given a matrix of m x n elements，以螺旋形式返回 矩阵里的元素。
 
+* idea: 按层输出，根据level 和 matrix 大小计算左上角/右下角 坐标，分别输出->, down, <-, up
+4 个方向的元素。然后以level + 1 递归调用。
+`private void spiral2(int[][] matrix, int level, List<Integer> list, int size) {}`
+初始调用为 `spiral2(matrix, 0, list, m*n);`
+
+base case1: rList.size == m*n, base case2: 一行，输出该行return，base case3: 一列，输出该列return。
+
+
+
+### ThirdMaximumNumber
+给定非空数组，输出第3大的数。如果不存在输出最大的元素。
+如果存在重复，输出数值是第3大的数。例如 [2, 2, 3, 1] 返回 1。
+
+* idea: 用一个优先级队列维护最大的3个数，注意 默认的 PriorityQueue 按自然序排列，因此传一个 Comparator 进去
+从大到小排序。另 PriorityQueue 允许重复元素，根据题意 只将非重复元素加入 pq 即可。
 
 
 
