@@ -7,6 +7,62 @@
 
 
 
+Subsets, Combinations, Permutations 三个题的代码需要牢记。
+
+### Combinations
+给定两个整数n, k，返回所有从 [1..n] 中取k 个数的组合。注意 Combinations 的解空间
+与 permutation 最大的不同是，解空间是一棵不对称的树。
+
+
+	public static void combine(List<List<Integer>> combs, List<Integer> comb, int start, int n, int k) {
+        if (k == 0) {
+            combs.add(new ArrayList<Integer>(comb));
+            return;
+        }
+        for (int i = start; i <= n; i++) {
+            comb.add(i);
+            combine(combs, comb, i + 1, n, k - 1);
+            comb.remove(comb.size() - 1);
+        }
+    }
+
+
+
+### Subsets
+Given a set of distinct integers, nums, return all possible subsets
+没什么可说的必须牢记的代码。
+
+
+	private void backtrack(int depth, int length, int[] nums, int[] path, 
+            List<List<Integer>> subsets) {
+        if (depth >= length) {
+            subsets.add(createSolution(path, nums));
+            return ;
+        }
+        for (int i = 0; i < 2; i++) {
+            path[depth] = i;
+            backtrack(depth + 1, length, nums, path, subsets);
+        }
+    }
+
+
+
+### Permutations 
+求排列
+
+	public void backtrack(int t, int n, int[] x, List<List<Integer>> permute) {
+        if (t >= n) {
+            permute.add(createSolution(x));
+            return ;
+        }
+        for (int i = t; i < n; i++) {
+            swap(x, t, i);// x[t] = h(i)当前状态第i个可选值
+            if (true) {
+                backtrack(t + 1, n, x, permute);
+            }
+            swap(x, t, i);
+        }
+    }
 
 
 ## Array
