@@ -7,37 +7,46 @@
 
 
 
+
+### CombinationSum2
+在 CombinationSum 基础上加一个条件，每个重复元素只可以出现一次
+例如 `[10, 1, 2, 7, 6, 1, 5] and target 8`，期望结果为
+
+	[
+	  [1, 7],
+	  [1, 2, 5],
+	  [2, 6],
+	  [1, 1, 6]
+	]
+
+
+
+
 ### CombinationSum
-给定一个候选数字集，和一个目标值 target，输出所有唯一的组合C，使得C 中元素之和等于 target。例如
-[2, 3, 6, 7], target = 7,结果集为 `[[7],[2, 2, 3]]`
+给定一个候选数字集，和一个目标值 target，输出所有不重复的组合C，使得 `sum(C) = target`。例如
+[2, 3, 6, 7], target = 7,结果集为 `[[2, 2, 3], [7]]`
 
-
-		public List<List<Integer>> combinationSum(int[] nums, int target) {
-		    List<List<Integer>> list = new ArrayList<>();
-		    Arrays.sort(nums);
-		    backtrack(list, new ArrayList<>(), nums, target, 0);
-		    return list;
-		}
-		
-		private void backtrack(List<List<Integer>> list, List<Integer> tempList, int [] nums, int remain, int start){
-		    if(remain < 0) return;
-		    else if(remain == 0) list.add(new ArrayList<>(tempList));
-		    else{ 
-		        for(int i = start; i < nums.length; i++){
-		            tempList.add(nums[i]);
-		            backtrack(list, tempList, nums, remain - nums[i], i); // not i + 1 because we can reuse same elements
-		            tempList.remove(tempList.size() - 1);
-		        }
-		    }
-		}			
-			 
+    private void bk(List<List<Integer>> r, Deque<Integer> path, 
+            int[] nums, int t, int start) {
+        if (t < 0) {return ;}
+        if (t == 0) {
+            r.add(new ArrayList<>(path));
+            return ;
+        }
+        for (int i = start; i < nums.length; i++) {
+            path.push(nums[i]);
+            bk(r, path, nums, t - nums[i], i);
+            //注意这里最后一个参数一定要传i，表示 不选元素 nums[i-1]
+            path.pop();
+        }
+    }
 
 
 Subsets, Combinations, Permutations 三个题的代码需要牢记。
 
 ### Combinations
 给定两个整数n, k，返回所有从 [1..n] 中取k 个数的组合。注意 Combinations 的解空间
-与 permutation 最大的不同是，解空间是一棵不对称的树。
+与 permutation 最大的不同是，解空间是一棵不对称的树(选与不选树)。
 
 
 	public static void combine(List<List<Integer>> combs, List<Integer> comb, int start, int n, int k) {
