@@ -5,6 +5,11 @@
 
 ## Backtracking
 
+### GenerateParentheses
+Given n pairs of parentheses, generate all combinations of
+well-formed parentheses eg. n = 3, ["((()))", "(()())", "(())()", "()(())", "()()()"]
+
+
 
 
 
@@ -18,8 +23,6 @@
 	  [2, 6],
 	  [1, 1, 6]
 	]
-
-
 
 
 ### CombinationSum
@@ -42,7 +45,7 @@
     }
 
 
-Subsets, Combinations, Permutations 三个题的代码需要牢记。
+Subsets, Combinations, Permutations 三个题的代码需要牢记。三个问题的解空间分别对应 子集树，选与不选树，排列树。
 
 ### Combinations
 给定两个整数n, k，返回所有从 [1..n] 中取k 个数的组合。注意 Combinations 的解空间
