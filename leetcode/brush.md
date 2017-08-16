@@ -7,6 +7,32 @@
 
 
 
+### CombinationSum
+给定一个候选数字集，和一个目标值 target，输出所有唯一的组合C，使得C 中元素之和等于 target。例如
+[2, 3, 6, 7], target = 7,结果集为 `[[7],[2, 2, 3]]`
+
+
+		public List<List<Integer>> combinationSum(int[] nums, int target) {
+		    List<List<Integer>> list = new ArrayList<>();
+		    Arrays.sort(nums);
+		    backtrack(list, new ArrayList<>(), nums, target, 0);
+		    return list;
+		}
+		
+		private void backtrack(List<List<Integer>> list, List<Integer> tempList, int [] nums, int remain, int start){
+		    if(remain < 0) return;
+		    else if(remain == 0) list.add(new ArrayList<>(tempList));
+		    else{ 
+		        for(int i = start; i < nums.length; i++){
+		            tempList.add(nums[i]);
+		            backtrack(list, tempList, nums, remain - nums[i], i); // not i + 1 because we can reuse same elements
+		            tempList.remove(tempList.size() - 1);
+		        }
+		    }
+		}			
+			 
+
+
 Subsets, Combinations, Permutations 三个题的代码需要牢记。
 
 ### Combinations
@@ -57,9 +83,7 @@ Given a set of distinct integers, nums, return all possible subsets
         }
         for (int i = t; i < n; i++) {
             swap(x, t, i);// x[t] = h(i)当前状态第i个可选值
-            if (true) {
-                backtrack(t + 1, n, x, permute);
-            }
+			backtrack(t + 1, n, x, permute);
             swap(x, t, i);
         }
     }
