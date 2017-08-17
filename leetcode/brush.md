@@ -5,12 +5,38 @@
 
 ## Backtracking
 
+
+
+
+
+
+
+
+### LetterCombinationsofaPhoneNumber
+给定九宫格键盘和 一个数字串，求所有可能的字母组合。例如 s=23, 所有可能的字母组合是 `[ad, ae, af, bd, be, bf, cd, ce, cf]`
+九宫格键盘数字与字母的映射关系是
+
+		mapping.put('2', "abc");
+        mapping.put('3', "def");
+        mapping.put('4', "ghi");
+        mapping.put('5', "jkl");
+        mapping.put('6', "mno");
+        mapping.put('7', "pqrs");
+        mapping.put('8', "tuv");
+        mapping.put('9', "wxyz");
+
+* idea: 问题可以这样描述 bk(r, path, s, idx, mapping)，r/path/s 不解释，idx 用来控制递归，每层对应 s 的一个字符。
+base case: idx == s.length()，否则根据 s.charAt(idx) 找对应的 字母，遍历加到path 再递归调用即可。
+
+
+
 ### GenerateParentheses
 Given n pairs of parentheses, generate all combinations of
 well-formed parentheses eg. n = 3, ["((()))", "(()())", "(())()", "()(())", "()()()"]
 
-
-
+* idea: 问题可以用 bk(r, path, open, close, n) 来描述，其中 r 保存输出结果，path 表示解空间树一条路径，
+open 表示已经生成的 ( 个数，close 表示已经生成的 ) 个数。 base case: open == n && close == n，加入一个结果。
+否则 继续生成 ( 的条件是 open < n，继续生成 ) 的条件是 close < open。
 
 
 ### CombinationSum2
