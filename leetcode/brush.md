@@ -1,14 +1,87 @@
 
 
 
+## Binary Search
+
+### FindPeakElement
+从数组num 里找极值，极值的定义是 大于相邻元素即可
+notice: `num[-1] = num[n] = -∞`
+
+
+
+
+### ArrangingCoins
+You have a total of n coins that you want to form in a staircase shape, where every k-th row must have exactly k coins.
+Given n, find the total number of full staircase rows that can be formed.
+n is a non-negative integer and fits within the range of a 32-bit signed integer.
+
 
 
 ## Backtracking
 
+### WordSearch(高频)
+给定2维数组board 和单词 word ，判断word 是否在board 顺序相邻的cell 里存在
+
+		[
+		  ['A','B','C','E'],
+		  ['S','F','C','S'],
+		  ['A','D','E','E']
+		]
+
+		word = "ABCCED", -> returns true,
+		word = "SEE", -> returns true,
+		word = "ABCB", -> returns false
 
 
+* idea 从 `board[i][j]` 任意一个cell 出发做 backtrack
+     * 顺时针方向 直到匹配word
+     * base case:
+     *      level == word.length
+     * for up/right/down/left 
+     *     if idx of i,j in (0, m), (0, n) 
+     *         backtrack
 
 
+### RestoreIPAddresses
+给定字符串s ，返回s 所有可能表示的 IP地址。eg. s = "25525511135", r = [255.255.11.135, 255.255.111.35]
+
+* idea:原问题可以理解成 将3个 点插入 s，得到4个部分，每个部分的整数值应该在 [0,255] 之间
+     * bk(r, path, s, dots): dots: 已经插入 s 的点的个数
+     * 考虑长度为 1,2,3 的子串 prefix，如果prefix 满足条件，那么问题变成了
+     * bk(r, path, s-prefix, dots + 1)
+     *     basecase: dots == 3
+     *     注意只考虑满足条件的 prefix/rest 
+
+* test cases: 注意边界case，[0.1.01.1] 不算合法ip。求子串剩余的部分可能为 empty
+
+
+	    private void bk(List<String> r, String path, String s, int dots) {
+	        if (dots == 3) {// 3个点已经
+	            Integer section = Integer.valueOf(s);
+	            if (s.length() > 1 && s.startsWith("0")) {
+	                return;
+	            }
+	            if (section >= 0 && section <= 255) {
+	                r.add(path + s);
+	            }
+	            return ;
+	        }
+	        // 从s 取长度为 [1, 2, 3] 的子串
+	        for (int i = 1; i <= 3; i++) {
+	            if (i > s.length()) {
+	                continue;
+	            }
+	            String prefix = s.substring(0, i);
+	            Integer section = Integer.valueOf(prefix);
+	            if (prefix.length() > 1 && prefix.startsWith("0")) {
+	                continue;
+	            }
+	            String rest = s.substring(i);
+	            if (section >= 0 && section <= 255 && rest.length() > 0) {
+	                bk(r, path + prefix + ".", s.substring(i), dots + 1);
+	            }
+	        }
+	    }
 
 
 
