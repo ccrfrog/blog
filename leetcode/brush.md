@@ -2,20 +2,320 @@
 
 
 
+## 动态规划
 
 
 
 
 
+
+
+
+### BestTimetoBuyandSellStock2
+可以执行多次交易，求最大可能的利润
+
+
+    public int maxProfit(int[] prices) {
+        int profit = 0;
+        for (int i = 1; i < prices.length; i++) {
+            if (prices[i] > prices[i - 1]) {
+                profit += prices[i] - prices[i - 1]; 
+            }
+        }
+        return profit;
+    }
+
+
+
+
+### BestTimetoBuyandSellStock
+给定数组 num = [7, 1, 5, 3, 6, 4]，num[i] 为第i 天某个股票的价格
+
+* 只能做一次买和一次卖，求最大可能的利润
+* 如上例 max profit = 6 - 1 = 5，不是7-1 因为 必须先买后卖
+
+
+
+	    public int maxProfit(int[] prices) {
+	        if (prices.length == 0) {
+	            return 0;
+	        }
+	        int mProfit = 0;
+	        int sofarMin = prices[0];
+	        Pair p = new Pair(-1, -1);
+	        int buy = -1; int sell = -1;
+	        for (int i = 0; i < prices.length; ++i) {
+	            if (prices[i] < sofarMin) {// 当日价格比 min 还小，更新min，记录买入天
+	                sofarMin = prices[i];
+	                buy = i;
+	            } else {
+	                int profit = prices[i] - sofarMin;
+	                if (profit > mProfit) {// 更新最大利润，保存 buy/sell Pair
+	                    mProfit = profit;
+	                    sell = i;
+	                    p.buy = buy;
+	                    p.sell = sell;
+	                }
+	            }
+	        }
+	        // 此时 p.buy/p.sell 对应买入和卖出的天数
+	        return mProfit;
+	    }
+
+
+
+## DIVIDE & CONQUER
+
+
+### SearchA2DMatrix
+	
+	[
+	  [1,   4,  7, 11, 15],
+	  [2,   5,  8, 12, 19],
+	  [3,   6,  9, 16, 22],
+	  [10, 13, 14, 17, 24],
+	  [18, 21, 23, 26, 30]
+	]
+
+	
+	public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix == null) {
+            return false;
+        }
+        int row = 0;
+        int column = matrix[0].length - 1;
+        while ( row <= matrix.length - 1 && column >= 0) {
+            int cell = matrix[row][column];
+            if (target == cell) {
+                return true;
+            } else if (target < cell) {
+                column -= 1;
+            } else {
+                row += 1;
+            }
+        }
+        return false;
+    }
+
+
+### MajorityElement
+The majority element is the element that appears more than ⌊ n/2 ⌋ times
+
+		public int majorityElement1(int[] nums) {
+	 	   Arrays.sort(nums);
+	 	   return nums[nums.length/2];
+		}
+
+
+### KthLargestElementinanArray
+
+	private int find(int[] nums, int left, int right, int i) {
+        if (left == right) {
+            return nums[left];
+        }
+        int p = randomPartition(nums, left, right);// p = num of smaller elements
+        if (p + 1 == i) {// pivot为目标元素
+            return nums[p];
+        } else if (i < p) {
+            return find(nums, left, p - 1, i);
+        } else {// k > p
+            return find(nums, p + 1, right, i - p - 1);
+        }
+    }
+
+	    /**
+    	 * 从nums 里随机选择一个元素当pivot 
+    	 * 将nums 划分成 小于pivot | pivot | 大于pivot 3部分
+    	 * 返回pivot 索引值
+    	 * */
+    public int randomPartition(int[] nums, int a, int b) {
+        Random random = new Random();
+        int r = Math.abs(random.nextInt()) % (b - a + 1) + a;
+        int pivot = nums[r];
+        swap(nums, r, nums.length - 1);
+        
+        int last = a - 1;
+        for (int i = a; i < b; i++) {
+            if (nums[i] < pivot) {
+                swap(nums, ++last, i);
+            }
+        }
+        last += 1;
+        swap(nums, last, nums.length - 1);
+        return last;
+    }
+
+
+
+
+
+### ExpressionAddOperators
+给定一个仅包含数字0-9的字符串，和一个目标值 target，返回所有可能的加操作符方式 使得表达式的值为 target
+	
+
+	"123", 6 -> ["1+2+3", "1*2*3"] 
+	"232", 8 -> ["2*3+2", "2+3*2"]
+	"105", 5 -> ["1*0+5","10-5"]
+	"00", 0 -> ["0+0", "0-0", "0*0"]
+	"3456237490", 9191 -> []
+
+没搞定
+
+### DifferentWaystoAddParentheses
+给定由数字和操作符组成的 string，oprt和数字有不同的加括号形式，返回所有可能的计算结果。
+eg. `Input: "2*3-4*5"`
+
+	(2*(3-(4*5))) = -34
+	((2*3)-(4*5)) = -14
+	((2*(3-4))*5) = -10
+	(2*((3-4)*5)) = -10
+	(((2*3)-4)*5) = 10
+	Output: [-34, -14, -10, -10, 10]
+
+	函数原型为 public List<Integer> diffWaysToCompute(String input) {}
+
+## DESIGN
+
+
+### LFUCache
+http://bookshadow.com/weblog/2016/11/22/leetcode-lfu-cache/
+
+
+
+### LRUCache
+
+			public class LRUCache {
+			    private static final float hashTableLoadFactor = 0.75f;
+			    private LinkedHashMap<Integer, Integer> map;
+			    private int cacheSize;
+			    
+			    public LRUCache(int capacity) {
+			        this.cacheSize = capacity;
+			        int hashTableCapacity = (int) Math.ceil(cacheSize / hashTableLoadFactor) + 1;
+			        map = new LinkedHashMap<Integer, Integer>(hashTableCapacity, hashTableLoadFactor, true) {
+			            // (an anonymous inner class)  
+			            private static final long serialVersionUID = 1;
+			
+			            @Override
+			            protected boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest) {
+			                return size() > LRUCache.this.cacheSize;
+			            }
+			        };
+			    }
+			    public int get(int key) {
+			        return map.getOrDefault(key, -1);
+			    }
+			    public void put(int key, int value) {
+			        map.put(key, value);
+			    }
+			}
 
 
 
 ## 深度优先搜索DFS
 
+### SumRoottoLeafNumbers
+Given a binary tree containing digits from 0-9 only, each root-to-leaf path could represent a number.
+An example is the root-to-leaf path 1->2->3 which represents the number 123.
+Find the total sum of all root-to-leaf numbers.
+	
 
+	     1
+   		/ \
+	   2   3	
+
+Return the sum = 12 + 13 = 25
+
+### SameTree
+Given two binary trees, write a function to check if they are equal or not.
+equal: 结构相同且 每个结点的值相等
+
+
+### PathSum2
+在 PathSum 基础上 找出所有 路径
+
+
+### PathSum
+给定二叉树和 sum, 判断 binary tree 里是否有一条 root-to-leaf 路径，每个结点之和等于sum
+
+Given the below binary tree and sum = 22
+
+
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \      \
+        7    2      1
+
+return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22
+
+
+### NumberofIslands
+Given a 2d grid map of '1's (land) and '0's (water), count the number of islands.
+This method approaches the problem as one of depth-first connected components search
+
+	11000
+	11000
+	00100
+	00011
+	answer = 3
+
+
+	11110
+	11010
+	11000
+	00000
+	answer = 1
+
+函数原型为
+
+		    public int numIslands(char[][] grid) {}
+
+
+
+### MaximumDepthofBinaryTree
+Given a binary tree, find its maximum depth. The maximum depth is the 
+number of nodes along the longest path from the root node down to the farthest leaf node.
 
 ### FlattenBinaryTreetoLinkedList
+将 二叉树 扁平化，right 指针当链表的 next 指针。
 
+	     1
+        / \
+       2   5
+      / \   \
+     3   4   6
+
+
+    1
+     \
+      2
+       \
+        3
+         \
+          4
+           \
+            5
+             \
+              6
+
+
+* idea： 代码很简单，关键是要能理解。根据题意：原左子树置为右子树，新左子树置为 null。
+因此先处理右子树，保存最后处理的结点(左子树根结点)到 prev，再处理左子树(此时已经将左子树与右子树的关系设置好)，再将 root.right 置为 prev。
+
+
+    public void flatten(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        flatten(root.right);
+        flatten(root.left);
+        root.right = prev;
+        root.left = null;
+        prev = root;
+    }
 
 
 
