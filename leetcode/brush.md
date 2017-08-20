@@ -1,12 +1,300 @@
 
 
 
+
+
+
+
+
+
+
+
+
+## 深度优先搜索DFS
+
+
+
+### FlattenBinaryTreetoLinkedList
+
+
+
+
+### ConstructBinaryTreefromPreorderandInorderTraversal
+从前序遍历 和 后序序列 构造二叉树。注意 序列中不能有重复元素。
+
+	`public TreeNode buildTree(int[] preorder, int[] inorder) {}`
+
+* idea: preorder[0] 为根 root，根据 root 从 inorder找出左右子树的长度递归处理。
+base case: preorder.length = 1 
+
+
+
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        if (postorder.length == 0) {
+            return null;
+        }
+        if (postorder.length == 1) {
+            return new TreeNode(postorder[0]);
+        }
+        
+        TreeNode root = new TreeNode(postorder[postorder.length - 1]);
+        int leftIdx = 0;
+        for (int i = 0; i < inorder.length; i++) {
+            if (inorder[i] == root.val) {
+                leftIdx = i;
+                break;
+            }
+        }
+        
+        int[] leftpostorder = Arrays.copyOfRange(postorder, 0, leftIdx);
+        int[] leftInorder = Arrays.copyOfRange(inorder, 0, leftIdx);
+        int[] rightpostorder = Arrays.copyOfRange(postorder, leftIdx, postorder.length - 1);
+        int[] rightInorder = Arrays.copyOfRange(inorder, leftIdx + 1, inorder.length);
+        root.left = leftpostorder.length > 0 ? buildTree(leftInorder, leftpostorder) : null;
+        root.right = rightpostorder.length > 0 ? buildTree(rightInorder, rightpostorder) : null;
+        return root;
+    }
+
+
+
+
+### ConstructBinaryTreefromInorderandPostorderTraversal
+从中序遍历 和 后序遍历 序列构造二叉树
+
+
+### BalancedBinaryTree
+Given a binary tree, determine if it is height-balanced. balanced: 每一个结点两个子树的高度差不超过1
+
+
+
+## 广度优先遍历BFS
+
+### WordLadder2
+找出所有 将 from变成to 的最短路径，每次改变一个字母
+
+### WordLadder
+给定两个单词from & to, 和一个词典dict，求将 from变成to 的最短路径，每次改变一个字母
+
+
+### PopulatingNextRightPointersinEachNode
+给定含next 字段的二叉树，填充每个结点的 next 值为同层的右兄弟结点
+
+
+
+### BinaryTreeZigzagLevelOrderTraversal
+二叉树 zigzag 层序遍历，
+
+		3
+	   / \
+  	  9  20
+  	  /  \
+  	 15   7
+
+	[
+	  [3],
+	  [20,9],
+	  [15,7]
+	]
+* idea: 使用 forward 变量判断方向。遍历每层元素判断方向 if forward 直接加入到list，否则先 入栈再从栈加入list。
+
+
+### BinaryTreeRightSideView
+给定二叉树，返回从右侧看该二叉树 得到的结点。函数原型为
+
+	public List<Integer> rightSideView(TreeNode root) {}
+
+* idea: 层序遍历，只输出每层最后一个结点。
+
+
+### BinaryTreeLevelOrderTraversal2
+与上一题唯一的不同在，最下层先输出。eg
+
+		3
+	   / \
+  	  9  20
+  	  /  \
+  	 15   7
+
+	[
+	  [15,7],
+	  [9,20],
+	  [3]
+	]
+
+* idea: 外层使用LinkedList，每层结束时加入到头部即可。`wrapList.add(0, subList);`
+
+### BinaryTreeLevelOrderTraversal
+二叉树层序遍历，函数原型为
+
+	    public List<List<Integer>> levelOrder(TreeNode root) {}
+        
+* idea: 注意每层对应一个 list，外层循环开始时 q.size() 即为本层元素个数 l，循环l 次将本层元素的下一层入队，并加入list
+
+
+
+## Binary Search Tree二分查找树
+
+重要特点/技巧：
+
+
+		1.  中序序列是有序的
+		2.  中序遍历时维持一个指针 prev，指向前一个元素（在递归调用right 前prev = root）
+
+
+
+### UniqueBinarySearchTrees2
+Given an integer n, generate all structurally unique BST's (binary search trees) that store values 1...n。
+
+		public List<TreeNode> generateTrees(int n) {}
+
+* idea: 问题可以描述为 gen(1, n)，如果以 i 为根结点，那么 左子树只能出现 n[1, i-1]，右子树只能出现 n[i+1, n]。
+递归生成 left/right，遍历left/right 生成 以i 为根的树加入结果集。
+
+
+### ValidateBinarySearchTree
+判断一个给定的bst 是否是有效的bst（每个结点大于左子树最大值，小于右子树最小值）
+
+* idea: 求左子树的最大元素，判断是否小于root，求右子树的最小元素，判断是否大于root。递归处理左右子树。
+
+### RecoverBinarySearchTree
+Two elements of a binary search tree (BST) are swapped by mistake. Recover the tree without changing its structure.
+
+* idea: 假设被交换的两个元素是a b，那么在中序序列里会存在 a.next < a, b.prev > b，通过prev 指针和中序遍历找到这两个元素a b。
+交换它们的值即可。
+
+
+### LowestCommonAncestorofaBinarySearchTree
+给定bst root和两个结点p/q，返回p q 的lca。函数原型是
+
+	public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {}
+
+* idea: 在bst 中，lca 的特点是 p.val < lca.val < q.val，假设 p比q 小。因此本题变得非常简单。
+
+
+### FindModeinBinarySearchTree
+Given a BST with duplicates, find all the mode(s) 
+(the most frequently occurred element) in the given BST。 mode元素可能有多个，全部返回。
+函数原型
+
+		public int[] findMode(TreeNode root) {}
+
+
+* idea: 注意中序序列是有序的。本题与 从已排序数组里找 mode 元素基本一样。只是将 计算出现次数的代码插入到 递归遍历bst中。
+
+
+
+### ConvertSortedListtoBinarySearchTree
+Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST
+
+* idea: list 与array 的不同：不能随机访问。为了达到平衡，核心是找list 的中间位置。
+设置两个指针， slow/fast，设置不同的步长即可到达中间位置。
+
+
+### ConvertSortedArraytoBinarySearchTree
+Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
+
+* constraints，高度要平衡的bst
+* idea: 中间元素当root，左右部分递归处理
+
+函数原型为
+
+	public TreeNode sortedArrayToBST(int[] nums) {}
+
+
+### MinimumAbsoluteDifferenceinBST
+给定非负数构成的 bst，返回最小的 差值的绝对值
+* idea：mDiff 只可能出现在 有序相邻的两个元素里，假设中序序列为 (e1, e2, e3... en)，那么 有 diff(ei, ei+1) < diff(ei, ei+2)
+中序遍历，求每个 元素和它之前的值的差值，更新 mDiff 即可。该题便利用到了上边的特点1和2。
+
+
 ## Binary Search
 
+基础的二分查找代码需要闭眼秒写出来。
+
+
+	 private int bs(int[] nums, int low, int high, int target) {
+        if (low > high) {
+            return -1;
+        }
+        int mid = low + (high - low) / 2;
+        if (nums[mid] == target) {
+            return mid;
+        } else if (target < nums[mid]) {
+            return bs(nums, low, mid - 1, target);
+        } else {
+            return bs(nums, mid + 1, high, target);
+        }
+    }	
+
+
+leetcode 里的题，经常会用到二分查找的变形。例如用二分查找 从 nums 里找大于等于 target 的第一个元素。代码如下
+
+
+	public int firstGreaterEqual(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length - 1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (nums[mid] < target) {// 去掉小于target 的元素
+                low = mid + 1;
+            } else {// nums[mid]>=target，target落在左半部分，此时 将high指向mid 允许步步逼近 target
+                high = mid;
+            }
+			// 结束条件：左边将 小于target的元素去掉，右边挨个逼近 low，最终会结束在 low==mid==high
+            if (high == mid && low == mid) {
+                break;
+            }
+        }
+        return low;
+    }
+
+
+### SearchforaRange
+给定已排序数组和target，返回 target在数组里的开始和结束索引值。
+`eg. Given [5, 7, 7, 8, 8, 10] and target value 8, return [3, 4]`
+
+在 firstGreaterEqual子程序基础上该题很容易解。
+
+
+    public int[] searchRange(int[] nums, int target) {
+        int idx = firstGreaterEqual(nums, target);
+        if (idx >= nums.length || nums[idx] != target) {// 没找到
+            return new int[]{-1, -1};
+        }
+        return new int[]{idx, firstGreaterEqual(nums, target + 1) - 1};
+    }
+
+
+### SearchInsertPosition
+给定已排序的数组和目标值t ，如果t 出现在数组里，返回它的索引值，否则返回它的插入位置。
+数组里没有重复元素
+
+		[1,3,5,6], 5 → 2
+ 		[1,3,5,6], 2 → 1
+ 		[1,3,5,6], 7 → 4
+ 		[1,3,5,6], 0 → 0
+
+* idea：二分查找，1)找到返回mid，2）未找到时 low 即为插入位置
+
+
 ### FindPeakElement
-从数组num 里找极值，极值的定义是 大于相邻元素即可
+从数组num 里找极值，极值的定义是 大于相邻元素
 notice: `num[-1] = num[n] = -∞`
 
+* idea: 写几个case 看看。要求用 logN 时间解。比较 mid与 mid-1/mid+1，然后分别只需考虑左半部分，右半部分
+* base case: length=1, length=2
+
+
+
+### SearchinRotatedSortedArray
+从轮转排序的数组中找 target值，找到返回索引值，否则返回 -1。
+`(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2)`
+
+* idea1：找pivot 元素，例如 0，pivot的元素特征是 pivot左边元素比它大。根据pivot 元素将数组还原成一个有序的 将前pivot个元素copy到末尾
+例如 `(4 5 6 7 0 1 2 4 5 6 7)` 然后从 0开始的元素里搜索。
+
+* idea2: 写出所有可能的 轮转情况，观察到 数组最有一边是 有序的，中间的数小于最右边的数，则右半段是有序的，若中间数大于最右边数，则左半段是有序的，
+要在有序的半段里用首尾两个数组来判断目标值是否在这一区域内，这样就可以确定保留哪半边了。分治策略。同FindPeakElement
 
 
 
@@ -14,7 +302,6 @@ notice: `num[-1] = num[n] = -∞`
 You have a total of n coins that you want to form in a staircase shape, where every k-th row must have exactly k coins.
 Given n, find the total number of full staircase rows that can be formed.
 n is a non-negative integer and fits within the range of a 32-bit signed integer.
-
 
 
 ## Backtracking
@@ -33,13 +320,14 @@ n is a non-negative integer and fits within the range of a 32-bit signed integer
 		word = "ABCB", -> returns false
 
 
-* idea 从 `board[i][j]` 任意一个cell 出发做 backtrack
-     * 顺时针方向 直到匹配word
-     * base case:
-     *      level == word.length
-     * for up/right/down/left 
-     *     if idx of i,j in (0, m), (0, n) 
-     *         backtrack
+* idea 从 `board[i][j]` 任意一个cell 出发做 backtrack。顺时针方向 直到匹配word
+     
+
+	     base case:
+	           level == word.length
+	     for up/right/down/left 
+	          if idx of i,j in (0, m), (0, n) 
+	              backtrack
 
 
 ### RestoreIPAddresses
@@ -410,13 +698,6 @@ base case1: rList.size == m*n, base case2: 一行，输出该行return，base ca
 
 * idea: 用一个优先级队列维护最大的3个数，注意 默认的 PriorityQueue 按自然序排列，因此传一个 Comparator 进去
 从大到小排序。另 PriorityQueue 允许重复元素，根据题意 只将非重复元素加入 pq 即可。
-
-
-
-
-
-
-
 
 
 
