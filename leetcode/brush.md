@@ -6,6 +6,98 @@
 
 
 
+### DecodeWays
+给定字符映射 mapping={A->1, B->2, ... Z-> 26}, 和数字msg，求解码方法数。eg. msg = 12，可以解码成 L 或者 AB，解码方法数是 2
+
+	
+	    public int numDecodings(String s) {
+	        if (s == null || s.length() == 0) {
+	            return 0;
+	        }
+	        int[] dw = new int[s.length() + 1];// dw 表示前n个字符 对应的解码数
+	        for (int i = 0; i < dw.length; i++) {
+	            dw[i] = -1;
+	        }
+	        dw[0] = 1;
+	        // target = dw[s.length]
+	        dp(s, s.length(), dw);
+	        
+	        return dw[s.length()];
+	    }
+	
+	    private int dp(String msg, int length, int[] dw) {
+	        //base case
+	        if ("".equals(msg) || length == 0) {
+	            return 1; 
+	        }
+	        
+	        // cache
+	        if (dw[length] != -1) {
+	            return dw[length];
+	        }
+	        
+	        int numOfDecodings = 0;
+	        for (int k = 1; k <= 26; k++) {
+	            String v = String.valueOf(k);
+	            if (msg.endsWith(v)) {
+	                int endIdx = msg.length() - v.length();
+	                String restMsg = msg.substring(0, endIdx);
+	                numOfDecodings += dp(restMsg, restMsg.length(), dw);
+	            }
+	        }
+	        dw[length] = numOfDecodings;
+	        return dw[length];
+	    }
+
+
+
+### CoinChangeMin
+给定不同的硬币面值coins，和一个总数amount。 
+求 最少的硬币数使得 coins[1] + coins[2] + .. + coins[k] = amount。 
+例如 coins = [1, 2, 5], amount = 11,  11 = 5 + 5 + 1, so r = 3
+
+
+
+    public void dfs(int[] coins, int index, int amount, int count) {
+        //base case: 面值最小的硬币
+        if (index == -1) {
+            return;
+        }
+        // 从面值最大的开始考虑
+        int number = amount / coins[index];// number 表示面值最大的coin 最多能取几个
+        for (int i = number; i >= 0; i--) {
+            int remain = amount - coins[index] * i;
+            int newcount = count + i;// newcount: 取i个面值最大的coin 对应的硬币数
+            if (remain > 0 && newcount < curMin) {
+                dfs(coins, index - 1, remain, newcount);
+            } else if (newcount < curMin) {
+                curMin = newcount;
+                return ;
+            } else {
+                break;
+            }
+        }
+        
+    }
+
+
+
+### CoinChange
+给定值n和 若干不同面值的硬币(数量无限制) S = {S1, S2, ... Sk}，
+求不同找零数量的方案数，例如 n = 4, S = {1, 2, 3} ,solutions = {1,1,1,1},{1,1,2},{2,2},{1,3}。方案数是 4
+
+* idea1: 按Sk 取与不取划分子问题： count(S, k, n) = count(S, k, n-Sk) + count(S, k-1, n)
+* idea2: 按 Sk 最多能取多少个划分子问题： 
+
+
+		int k = amount / coins[j];// k = coins[j] 可以取的最多数量
+        int sum = 0;
+        for (int i = k; i >= 0; i--) {
+            sum += coinChangeAux(coins, j-1, amount - i*coins[j], cache);
+        } 
+
+* base case 都是 n=0 时 count = 1，只有一种方案。
+
 
 ### ClimbingStairs
 n 个台阶的楼梯，每次可以登 1步或者2步，爬上顶部有多少种不同的方法
