@@ -7,6 +7,26 @@
 
 
 
+### ClimbingStairs
+n 个台阶的楼梯，每次可以登 1步或者2步，爬上顶部有多少种不同的方法
+
+    public int climbStairs20170821(int n) {
+        int[] ways = new int[n + 1];
+        dp(n, ways);
+        return ways[n];
+    }
+
+    private int dp(int n, int[] ways) {
+        if (n == 0 || n == 1) {
+            ways[n] = 1;
+            return 1;
+        }
+        if (ways[n] != 0) {
+            return ways[n];
+        }
+        ways[n] = dp(n - 1, ways) + dp(n - 2, ways);
+        return ways[n];
+    }
 
 
 
@@ -24,7 +44,6 @@
         }
         return profit;
     }
-
 
 
 
@@ -409,7 +428,7 @@ Given a binary tree, determine if it is height-balanced. balanced: 每一个结�
 ### BinaryTreeLevelOrderTraversal2
 与上一题唯一的不同在，最下层先输出。eg
 
-		3
+     	3
 	   / \
   	  9  20
   	  /  \
@@ -981,7 +1000,10 @@ n*n 的二维数组，顺时针方向旋转90度
 
 
 ### SpiralMatrix
-Given a matrix of m x n elements，以螺旋形式返回 矩阵里的元素。
+Given a matrix of m x n elements，以螺旋形式返回 矩阵里的元素。函数原型为
+
+	public List<Integer> spiralOrder(int[][] matrix) {}
+
 
 * idea: 按层输出，根据level 和 matrix 大小计算左上角/右下角 坐标，分别输出->, down, <-, up
 4 个方向的元素。然后以level + 1 递归调用。
@@ -989,7 +1011,6 @@ Given a matrix of m x n elements，以螺旋形式返回 矩阵里的元素。
 初始调用为 `spiral2(matrix, 0, list, m*n);`
 
 base case1: rList.size == m*n, base case2: 一行，输出该行return，base case3: 一列，输出该列return。
-
 
 
 ### ThirdMaximumNumber
