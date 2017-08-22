@@ -6,6 +6,34 @@
 
 
 
+### MaximumSubarray
+For example, given the array [-2,1,-3,4,-1,2,1,-5,4],
+the contiguous subarray [4,-1,2,1] has the largest sum = 6
+
+    	public int maxSubArray(int[] nums) {}
+
+
+
+### LongestIncreasingSubsequence
+给定未排序的整数数组，找出最长升序子序列的长度。
+`eg. [10, 9, 2, 5, 3, 7, 101, 18], The longest increasing subsequence is [2, 3, 7, 101], therefore the length is 4`
+
+* idea: 数组只有一个索引值是变量，设 `lis[i]` 为 index = i 结尾的子数组对应的目标值，考虑怎样根据子问题的解 `lis[k], k in [0.. i-1]`
+求 `lis[i]`。`lis[i] = (num[i] > num[k]) ? max(lis[k] + 1) : 1`。例如 求 lis[7] 时，因为 n[7]=18 > n[5]=7，
+lis[7] 只需在 lis[5] 的基础上加1即可，因为[.. 7, 18] 构成一个更长的升序子序列。而 n[7] < n[6] 表示 [.. 101, 18] 不能构成一个
+更长的升序子序列。
+
+        int length = 1;
+        for (int i = 0; i < n; i++) {
+            int prev = dpRecursive(nums, i, cache) + 1;
+            if (nums[i] < nums[n]) {
+                length = Math.max(length, prev);
+            }
+        }
+
+该解法时间复杂度为 O(n^2)。注意最后 要遍历 lis[0..n] 取最大值。
+
+
 ### DecodeWays
 给定字符映射 mapping={A->1, B->2, ... Z-> 26}, 和数字msg，求解码方法数。eg. msg = 12，可以解码成 L 或者 AB，解码方法数是 2
 
