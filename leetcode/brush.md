@@ -6,12 +6,119 @@
 
 
 
+
+### TargetSum
+给定非负整数构成的数组 a[n]和 target，假设有两种符号 + -，判断有多少种分配符号的方法 使得 +/-a1 +/-a2... +/-an = target
+
+
+   
+	    private int dp(int[] nums, int target, int i, Map<Pair, Integer> dp) {
+	        Pair key = new Pair(i, target);
+	        //base case
+	        if (i == 0) {
+	            int ways = (nums[0] == target) ? 1 : 0;
+	            ways += (nums[0] == -target) ? 1 : 0;
+	            dp.put(key, ways);
+	            return ways;
+	        }
+	        //cache
+	        if (dp.get(key) != null) {
+	            return dp.get(key);
+	        }
+	        int ways = dp(nums, target - nums[i], i - 1, dp) + dp(nums, target + nums[i], i - 1, dp);
+	        dp.put(key, ways);
+	        return ways;
+	    }
+
+
+
+
+
+### PerfectSquares
+给出一个正整数n，求至少需要多少个完全平方数（例如1，4，9，16……）相加能得到n。 
+例如，n = 12，返回3，因为12 = 4 + 4 + 4。n = 13，返回2，因为13 = 4 + 9
+
+
+	    private int dp(int x, int[] A, int[] m) {
+	        if (x == 0) {
+	            m[0] = 0;
+	            return 0;
+	        }
+	        if (m[x] != -1) {
+	            return m[x];
+	        }
+	        int min = Integer.MAX_VALUE;
+	        for (int i = A.length - 1; i >= 0; i--) {
+	            int rest = x - A[i];
+	            if (rest >= 0) {
+	                min = Math.min(min, dp(rest, A, m));
+	            }
+	        }
+	        m[x] = min + 1;
+	        return m[x];
+	    }	
+	
+ 
+
+
+
+### PartitionEqualSubsetSum
+给定一个数组 nums，判断nums 是否能被分成两个子集s1 & s2 使得 sum(s1) = sum(s2)
+
+* idea: 1. 如果 sum(nums) 为odd 则肯定不可以 直接返回 false
+* 2. 问题可以转化为 能否从nums 里找若干个元素。使得 sum(x1, x2, ... xk) = sum(nums)/2。
+base case：target=0=>true, target<0=> false
+
+
+	    private boolean dp(int[] nums, int i, int target, Boolean[][] t) {
+	        if (target == 0) {
+	            return true;
+	        }
+	        if (target < 0) {
+	            return false;
+	        }
+	        if (i < 0) {
+	            return false;
+	        }
+	        if (t[i][target] != null) {
+	            return t[i][target]; 
+	        }
+	        // pick
+	        boolean answer = dp(nums, i - 1, target - nums[i], t)// 取nums[i]
+	                || dp(nums, i - 1, target, t);//不取
+	        
+	        t[i][target] = answer;
+	        return t[i][target];
+	    }
+
+
+
+
 ### MaximumSubarray
+给定一个未排序的数组，求它的连续子数组的和的最大值。
 For example, given the array [-2,1,-3,4,-1,2,1,-5,4],
 the contiguous subarray [4,-1,2,1] has the largest sum = 6
 
     	public int maxSubArray(int[] nums) {}
 
+* idea: 很明显 最大和对应的子数组不只一个，题要求最优解对应的值暗示着dp 解法。
+* 1）最优子结构，设 dp(num, i) 为以i 结尾的子数组对应的目标值，那么 
+dp(num, i) = (dp(num, i-1) > 0 ? dp(num, i-1) : 0) + num[i]，
+因为递归式简单，考虑直接bottom-up 求值。
+
+	    public int maxSubArray(int[] nums) {
+	        int n = nums.length;
+	        int[] maxSum = new int[n];//maxSum[i] means the maximum subarray ending with A[i];
+	        maxSum[0] = nums[0];// at least one number
+	        int max = maxSum[0];
+	
+	        for (int i = 1; i < n; i++) {
+	            maxSum[i] = nums[i] + (maxSum[i - 1] > 0 ? maxSum[i - 1] : 0);
+	            max = Math.max(max, maxSum[i]);
+	        }
+	
+	        return max;
+	    } 
 
 
 ### LongestIncreasingSubsequence
@@ -248,6 +355,7 @@ The majority element is the element that appears more than ⌊ n/2 ⌋ times
 
 ### KthLargestElementinanArray
 
+
 	private int find(int[] nums, int left, int right, int i) {
         if (left == right) {
             return nums[left];
@@ -261,6 +369,8 @@ The majority element is the element that appears more than ⌊ n/2 ⌋ times
             return find(nums, p + 1, right, i - p - 1);
         }
     }
+
+
 
 	    /**
     	 * 从nums 里随机选择一个元素当pivot 
