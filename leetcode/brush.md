@@ -9,7 +9,41 @@
 ### UniqueBinarySearchTrees
 
 
+### WordBreak
+给定字符串s 和 字典dict，判断s 是否可以被dict 里的词分隔
+eg. dict = {leet, code, apple}。
+s = leetcode, return true 。
+s = successprogrammer return false。
 
+* idea: 交叉子问题暗示用dp 解法，考虑一个子问题，对 dict中的单词word，只要 s.endsWith(word) 且 s-word 也可以分割，那
+s 就是可以被分割的。递归式为 dp(s) = e in dict && s.endsWith(e) && dp(s-e)，加入 memoization 当缓存，直接根据递归式写代码即可。
+
+
+	
+	    private boolean dp2(String s, List<String> dict, int n, Boolean[] t) {
+	        if (n == 0 || "".equals(s)) {
+	            t[0] = true;
+	            return true;
+	        }
+	        
+	        if (t[n] != null) {
+	            return t[n];
+	        }
+	
+	        boolean r = false;
+	        for (String word : dict) {
+	            if (s.endsWith(word)) {
+	                int eIdx = s.length() - word.length();
+	                String sub = s.substring(0, eIdx);
+	                r = dp2(sub, dict, sub.length(), t);
+	                if (r) {
+	                    break;
+	                }
+	            }
+	        }
+	        t[n] = r;
+	        return r;
+	    }
 
 
 ### Triangle
@@ -28,6 +62,40 @@ The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11). 函数
 
 * idea: 求最后一行每一列对应的 sum，再从 中取出最小值。很容易得出递归式 dp(row, column) = min(dp(row-1, column-1), dp(row-1, column)) + line.get(column)
 可以在 O(n) 时间求解 。
+
+递归式比较简单，可以考虑直接写出迭代代码
+
+
+
+	    public int minimumTotal20170824(List<List<Integer>> triangle) {
+	        int row = triangle.size();
+	        
+	        for (int i = 1; i < row; i++) {
+	            List<Integer> prev = triangle.get(i-1);
+	            List<Integer> line = triangle.get(i);
+	            
+	            for (int c = 0; c < line.size(); c++) {
+	                Integer e = line.get(c);
+	                if (c == 0) {
+	                    line.set(c, e + prev.get(0));
+	                } else if (c == line.size() - 1) {
+	                    line.set(c, e + prev.get(prev.size()-1));
+	                } else {
+	                    Integer left = prev.get(c - 1);
+	                    Integer right = prev.get(c);
+	                    line.set(c, e + Math.min(left, right));
+	                }
+	            }
+	        }
+	        
+	        List<Integer> last = triangle.get(row - 1);
+	        int min = Integer.MAX_VALUE;
+	        for (Integer e : last) {
+	            min = Math.min(min, e);
+	        }
+	        return min;
+	    }
+
 
 
 ### TargetSum
@@ -106,7 +174,7 @@ base case：target=0=>true, target<0=> false
 	        if (t[i][target] != null) {
 	            return t[i][target]; 
 	        }
-	        // pick
+
 	        boolean answer = dp(nums, i - 1, target - nums[i], t)// 取nums[i]
 	                || dp(nums, i - 1, target, t);//不取
 	        
