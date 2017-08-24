@@ -6,6 +6,29 @@
 
 
 
+### UniqueBinarySearchTrees
+
+
+
+
+
+### Triangle
+Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.
+
+	  [
+	     [2],
+	    [3,4],
+	   [6,5,7],
+	  [4,1,8,3]
+	  ]
+
+
+The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11). 函数原型为
+`public int minimumTotal(List<List<Integer>> triangle) {}`
+
+* idea: 求最后一行每一列对应的 sum，再从 中取出最小值。很容易得出递归式 dp(row, column) = min(dp(row-1, column-1), dp(row-1, column)) + line.get(column)
+可以在 O(n) 时间求解 。
+
 
 ### TargetSum
 给定非负整数构成的数组 a[n]和 target，假设有两种符号 + -，判断有多少种分配符号的方法 使得 +/-a1 +/-a2... +/-an = target
@@ -469,9 +492,9 @@ An example is the root-to-leaf path 1->2->3 which represents the number 123.
 Find the total sum of all root-to-leaf numbers.
 	
 
-	     1
-   		/ \
-	   2   3	
+		     1
+	   		/ \
+		   2   3	
 
 Return the sum = 12 + 13 = 25
 
@@ -555,16 +578,16 @@ number of nodes along the longest path from the root node down to the farthest l
 因此先处理右子树，保存最后处理的结点(左子树根结点)到 prev，再处理左子树(此时已经将左子树与右子树的关系设置好)，再将 root.right 置为 prev。
 
 
-    public void flatten(TreeNode root) {
-        if (root == null) {
-            return;
-        }
-        flatten(root.right);
-        flatten(root.left);
-        root.right = prev;
-        root.left = null;
-        prev = root;
-    }
+	    public void flatten(TreeNode root) {
+	        if (root == null) {
+	            return;
+	        }
+	        flatten(root.right);
+	        flatten(root.left);
+	        root.right = prev;
+	        root.left = null;
+	        prev = root;
+	    }
 
 
 
@@ -577,33 +600,32 @@ number of nodes along the longest path from the root node down to the farthest l
 base case: preorder.length = 1 
 
 
-
-    public TreeNode buildTree(int[] inorder, int[] postorder) {
-        if (postorder.length == 0) {
-            return null;
-        }
-        if (postorder.length == 1) {
-            return new TreeNode(postorder[0]);
-        }
-        
-        TreeNode root = new TreeNode(postorder[postorder.length - 1]);
-        int leftIdx = 0;
-        for (int i = 0; i < inorder.length; i++) {
-            if (inorder[i] == root.val) {
-                leftIdx = i;
-                break;
-            }
-        }
-        
-        int[] leftpostorder = Arrays.copyOfRange(postorder, 0, leftIdx);
-        int[] leftInorder = Arrays.copyOfRange(inorder, 0, leftIdx);
-        int[] rightpostorder = Arrays.copyOfRange(postorder, leftIdx, postorder.length - 1);
-        int[] rightInorder = Arrays.copyOfRange(inorder, leftIdx + 1, inorder.length);
-        root.left = leftpostorder.length > 0 ? buildTree(leftInorder, leftpostorder) : null;
-        root.right = rightpostorder.length > 0 ? buildTree(rightInorder, rightpostorder) : null;
-        return root;
-    }
-
+	    public TreeNode buildTree(int[] inorder, int[] postorder) {
+	        if (postorder.length == 0) {
+	            return null;
+	        }
+	        if (postorder.length == 1) {
+	            return new TreeNode(postorder[0]);
+	        }
+	        
+	        TreeNode root = new TreeNode(postorder[postorder.length - 1]);
+	        int leftIdx = 0;
+	        for (int i = 0; i < inorder.length; i++) {
+	            if (inorder[i] == root.val) {
+	                leftIdx = i;
+	                break;
+	            }
+	        }
+	        
+	        int[] leftpostorder = Arrays.copyOfRange(postorder, 0, leftIdx);
+	        int[] leftInorder = Arrays.copyOfRange(inorder, 0, leftIdx);
+	        int[] rightpostorder = Arrays.copyOfRange(postorder, leftIdx, postorder.length - 1);
+	        int[] rightInorder = Arrays.copyOfRange(inorder, leftIdx + 1, inorder.length);
+	        root.left = leftpostorder.length > 0 ? buildTree(leftInorder, leftpostorder) : null;
+	        root.right = rightpostorder.length > 0 ? buildTree(rightInorder, rightpostorder) : null;
+	        return root;
+	    }
+	
 
 
 
@@ -633,11 +655,11 @@ Given a binary tree, determine if it is height-balanced. balanced: 每一个结�
 ### BinaryTreeZigzagLevelOrderTraversal
 二叉树 zigzag 层序遍历，
 
-		3
-	   / \
-  	  9  20
-  	  /  \
-  	 15   7
+			3
+		   / \
+	  	  9  20
+	  	  /  \
+	  	 15   7
 
 	[
 	  [3],
@@ -658,11 +680,11 @@ Given a binary tree, determine if it is height-balanced. balanced: 每一个结�
 ### BinaryTreeLevelOrderTraversal2
 与上一题唯一的不同在，最下层先输出。eg
 
-     	3
-	   / \
-  	  9  20
-  	  /  \
-  	 15   7
+	     	3
+		   / \
+	  	  9  20
+	  	  /  \
+	  	 15   7
 
 	[
 	  [15,7],
@@ -877,6 +899,51 @@ n is a non-negative integer and fits within the range of a 32-bit signed integer
 	     for up/right/down/left 
 	          if idx of i,j in (0, m), (0, n) 
 	              backtrack
+
+
+	    public boolean exist(char[][] board, String word) {
+	        int row = board.length;
+	        int column = board[0].length;
+	        boolean exist = false;
+	        boolean[][] visited = new boolean[row][column];
+	        for (int i = 0; i < row; i++) {
+	            for (int j = 0; j < column; j++) {
+	                exist = dfs(board, word, 0, i, j, visited);
+	                if (exist) {
+	                    return true;
+	                }
+	            }
+	        }
+	        return exist;
+	    }
+	
+	    private boolean dfs(char[][] board, String word, int level, int i, int j, boolean[][] visited) {
+	        // base case0: out of range
+	        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length) {
+	            return false;
+	        }
+	        if (visited[i][j]) {
+	            return false;
+	        }
+	        // base case1: board[i][j] != word[level] 
+	        if (board[i][j] != word.charAt(level)) {
+	            return false;
+	        }
+	        
+	        // base case2: level == word.length - 1
+	        if (level == word.length() - 1) {
+	            return true;
+	        }
+	        visited[i][j] = true;
+	        boolean r = false;
+	        r = dfs(board, word, level + 1, i - 1, j, visited) //up
+	                || dfs(board, word, level + 1, i, j + 1, visited)// right
+	                || dfs(board, word, level + 1, i + 1, j, visited)// down
+	                || dfs(board, word, level + 1, i, j - 1, visited);
+	        visited[i][j] = false;
+	        return r;
+	    }	
+
 
 
 ### RestoreIPAddresses
