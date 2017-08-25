@@ -6,7 +6,37 @@
 
 
 
+### UniquePaths
+
+
 ### UniqueBinarySearchTrees
+Given n, how many structurally unique BST's that store values 1...n? n = 3, 5种结构不同的 bst，分别
+画出以1 2 3 为根的bst。确定根元素后，number of BST = 左子树个数 * 右子树个数
+
+
+		    public int numTrees20170825Accepted(int n) {
+		        int[] cache = new int[n + 1];
+		        dp(n, cache);
+		        return cache[n];
+		    }
+		    
+		    private int dp(int n, int[] cache) {
+		        if (n == 0) {
+		            cache[n] = 1;
+		            return 1;
+		        }
+		        if (cache[n] != 0) {
+		            return cache[n];
+		        }
+		        int ways = 0;
+		        for (int i = 1; i <= n; i++) {// 以i 为根
+		            ways += dp(i-1, cache) * dp(n - i, cache);
+		        }
+		        cache[n] = ways;
+		        return ways;
+		    }
+
+
 
 
 ### WordBreak
