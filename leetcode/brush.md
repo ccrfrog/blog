@@ -2,11 +2,654 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 链表 LinkedList
+
+
+### SwapNodesinPairs
+Given a linked list, swap every two adjacent nodes and return its head.
+
+For example,
+Given 1->2->3->4, you should return the list as 2->1->4->3. 
+
+	
+	    public ListNode swapPairs(ListNode head) {
+	        ListNode p1 = head;
+	        ListNode p2 = (head == null) ? null : head.next;
+	        return swapPairs(p1, p2);
+	    }
+	    
+	    private ListNode swapPairs(ListNode p1, ListNode p2) {
+	        // base case: p1,p2 both null, p2 null 
+	        if (p2 == null) {
+	            return p1;
+	        }
+	        
+	        ListNode nextP1 = p2.next;
+	        ListNode nextP2 = (nextP1 == null) ? null : nextP1.next;
+	        p2.next = p1;
+	        p1.next = swapPairs(nextP1, nextP2);
+	        return p2;
+	    }
+
+
+
+### SortList
+Sort a linked list in O(n log n) time using constant space complexity
+	
+	
+	
+	    /**
+	     * divide: 找中间元素 mid
+	     * conquer: mergeSort(head, mid)
+	     *          mergeSort(mid.next, tail)
+	     * combine: 归并两个已经有序的linked list
+	     * */
+	    public ListNode sortList(ListNode head) {
+	        // base case: 0 个或1个 元素
+	        if (head == null || head.next == null) {
+	            return head;
+	        }
+	        
+	        // 找中间元素
+	        ListNode prev = null;
+	        ListNode slow = head;
+	        ListNode fast = head;
+	        while (fast != null && fast.next != null) {
+	            prev = slow;
+	            slow = slow.next;
+	            fast = fast.next.next;
+	        }
+	        prev.next = null;
+	        
+	        return merge(sortList(head), sortList(slow));
+	    }
+	
+	
+	    // 归并两个已经排好序的 list
+	    private ListNode merge(ListNode h1, ListNode h2) {
+	        //base case: 其中一个为null
+	        if (h1 == null) {
+	            return h2;
+	        }
+	        if (h2 == null) {
+	            return h1;
+	        }
+	        if (h1.val <= h2.val) {
+	            h1.next = merge(h1.next, h2);
+	            return h1;
+	        } else {
+	            h2.next = merge(h1, h2.next);
+	            return h2;
+	        }
+	    }
+	
+
+
+
+
+### RotateList
+
+	Given a list, rotate the list to the right by k places, where k is non-negative.
+	Given 1->2->3->4->5->NULL and k = 2,
+	return 4->5->1->2->3->NULL
+	
+	
+	    public ListNode rotateRight(ListNode head, int k) {
+	        if (head == null || k == 0) {
+	            return head;
+	        }
+	        k = k % length(head);
+	        if (k == 0) {
+	            return head;
+	        }
+	        // fast 先走k 步
+	        ListNode sentinel = new ListNode();
+	        sentinel.next = head;
+	        ListNode slow = sentinel;
+	        ListNode fast = sentinel;
+	        for (int i = 0; i < k; i++) {// k 肯定小于n
+	            fast = fast.next;
+	        }
+	        
+	        while (fast.next != null) {
+	            slow = slow.next;
+	            fast = fast.next;
+	        }// 循环结束时 slow 指向目标元素(倒数第k 个元素的prev)，fast 指向 tail
+	        ListNode newHead = slow.next;
+	        slow.next = null;
+	        fast.next = head;
+	        return newHead;
+	    }
+	
+	    private int length(ListNode head) {
+	        int n = 0; 
+	        ListNode p = head;
+	        while (p != null) {
+	            n++;
+	            p = p.next;
+	        }
+	        return n;
+	    }
+    
+
+### ReverseLinkedList2 not accepted
+Reverse a linked list from position m to n. Do it in-place and in one-pass.
+For example:
+	
+		Given 1->2->3->4->5->NULL, m = 2 and n = 4,
+		return 1->4->3->2->5->NULL. 
+
+
+
+
+### ReverseLinkedList 链表反转
+
+	
+	    /**
+	     * p为指向旧list的指针，p向右移动直到null
+	     * newHead 指向新list 头部，newHead 一直向左
+	     * 初始调用 reverseIterative(head, null)
+	     * */
+	    private ListNode reverseIterative(ListNode head, ListNode newHead) {
+	        ListNode p = head;
+	        while (p != null) {
+	            ListNode next = p.next;
+	            p.next = newHead;
+	            newHead = p;
+	            p = next;
+	        }
+	        return newHead;
+	    }
+	
+	
+	    private ListNode reverseRecursive(ListNode head, ListNode newHead) {
+	        if (head == null) {
+	            return newHead;
+	        }
+	        ListNode next = head.next;
+	        head.next = newHead;
+	        return reverseRecursive(next, head);
+	    }
+
+
+### ReorderList
+Given a singly linked list L: L0?L1?…?Ln-1?Ln,
+reorder it to: L0?Ln?L1?Ln-1?L2?Ln-2?。
+eg. Given {1,2,3,4}, reorder it to {1,4,2,3}
+
+	
+	    public void reorderList(ListNode head) {
+	        if (head == null || head.next == null) {
+	            return ;
+	        }
+	        reorder(head);
+	    }
+	
+	    /**
+	     * 找tail 和 tail的前一个元素，设置好3 个指针
+	     * 递归处理子问题
+	     * 以下边list为例
+	     * 1->2->3->4->null => 1->4->2->3->null 
+	     * 需要修改 1.next 3.next 4.next 3个指针
+	     * */
+	    private ListNode reorder(ListNode head) {
+	        if (head.next == null) {
+	            return head;
+	        }
+	        ListNode p = head;
+	        ListNode prev = null;
+	        while (p.next != null) {
+	            prev = p;
+	            p = p.next;
+	        }// 循环结束后 p指向 tail，prev 指向 tail 的前一个元素
+	        
+	        if (head.next == p) {// base case：只有两个元素 直接返回
+	            return head;
+	        }
+	        
+	        ListNode hNext = head.next;
+	        head.next = p;
+	        
+	        prev.next = null;
+	        p.next = reorder(hNext);
+	        return head;
+	    }
+
+
+
+### RemoveNthNodeFromEndofList
+
+
+		 /**
+	     * 两个指针：p2 先向前走n + 1步，p1 指向头，p1/p2 保持n 步间距
+	     * 当 p2指向尾部时，p1 便是目标结点
+	     * 
+	     * 使用prev 指针比较方便删除操作，因此先new 一个start 结点，让 start.next = head
+	     * */
+	    public ListNode removeNthFromEnd(ListNode head, int n) {
+	        ListNode start = new ListNode(0);
+	        ListNode slow = start, fast = start;
+	        slow.next = head;
+	
+	        //Move fast in front so that the gap between slow and fast becomes n
+	        for (int i = 1; i <= n + 1; i++) {
+	            fast = fast.next;
+	        }
+	        //Move fast to the end, maintaining the gap
+	        while (fast != null) {
+	            slow = slow.next;
+	            fast = fast.next;
+	        }
+	        //Skip the desired node
+	        slow.next = slow.next.next;
+	        return start.next;
+	    }
+	
+
+
+### RemoveDuplicatesfromSortedList2
+给定已排序的链表，删除所有包含重复的元素，只留下 不同的元素
+
+	Given 1->2->3->3->4->4->5, return 1->2->5.
+	Given 1->1->1->2->3, return 2->3
+
+
+	    public ListNode deleteDuplicates(ListNode head) {
+	        // base case
+	        if (head == null || head.next == null) {
+	            return head;
+	        }
+	        if (head.val == head.next.val) {//1 1 2
+	            return deleteDuplicates(findUnique(head));
+	        } else {// 1 2 3
+	            head.next = deleteDuplicates(head.next);
+	            return head;
+	        }
+	    }
+	
+	    // 找第1 个与 head.val 值不同的元素 或者 null
+	    private ListNode findUnique(ListNode head) {
+	        ListNode next = head.next;// 1 1 5
+	        while (next != null && next.val == head.val) {
+	            next = next.next;
+	        }
+	        return next;
+	    }
+
+
+### RemoveDuplicatesfromSortedList
+
+
+	    /**
+	     * 一遍扫描，对每个p 将p.next 指向与 p.val 不相等的 下一个元素，然后 p右移
+	     * */
+	    public ListNode deleteDuplicates(ListNode head) {
+	        if (head == null) {
+	            return head;
+	        }
+	        for (ListNode p = head; p != null; p = p.next) {// 从p开始找下一个不等于p的元素 theNext
+	            ListNode theNext = p.next;
+	            while (theNext != null && theNext.val == p.val) {
+	                theNext = theNext.next;
+	            }
+	            p.next = theNext;
+	        }
+	        
+	        return head;
+	    }
+
+
+
+### PartitionList
+给定链表和 值x，切分链表使得左半部分所有节点的值小于 x，而右半部分大于等于x
+eg. Given 1->4->3->2->5->2 and x = 3,
+return `1->2->2->4->3->5.`
+
+* constraints: 保持原链表中元素的相对顺序。
+
+* idea: 因为要保持原来的相对顺序，一遍遍历构造两个链表，s1 指向 小于x的结点，s2 指向大于等于x 的结点。遍历结束后
+将 s1/s2 组合成一个。注意边界条件。
+
+	    public ListNode partition(ListNode head, int x) {
+	        if (head == null || head.next == null) {
+	            return head;
+	        }
+	        
+	        // 至少两个元素
+	        ListNode s1 = new ListNode(0);// 指向小于x 的链表
+	        ListNode s2 = new ListNode(0);
+	        ListNode p1 = s1;
+	        ListNode p2 = s2;
+	        
+	        for (ListNode p = head; p != null; p = p.next) {
+	            if (p.val < x) {
+	                p1.next = p;
+	                p1 = p1.next;
+	            } else {// p.val >= x
+	                p2.next = p;
+	                p2 = p2.next;
+	            }
+	        }
+	        p2.next = null;// 注意这一行 特别容易忽略
+	        
+	        p1.next = s2.next;
+	        return s1.next;
+	    }
+
+
+### MergeTwoSortedLists
+
+
+### PalindromeLinkedList
+判断一个单链表是不是回文
+
+	    public boolean isPalindrome(ListNode head) {
+	        ListNode copy = copyList(head);
+	        ListNode reversed = reverse(copy);
+	        
+	        ListNode p1 = head;
+	        ListNode p2 = reversed;
+	        
+	        while (p1 != null && p2 != null) {
+	            if (p1.val != p2.val) {
+	                return false;
+	            }
+	            p1 = p1.next;
+	            p2 = p2.next;
+	        }
+	        return true;
+	    }
+	
+	    private ListNode copyList(ListNode head) {
+	        if (head == null) {
+	            return null;
+	        }
+	        ListNode copyHead = new ListNode(head.val);
+	        copyHead.next = copyList(head.next);
+	        return copyHead;
+	        
+	    }
+	
+	    private ListNode reverse(ListNode head) {
+	        
+	        return recursive(head, null);
+	    }
+	
+	    private ListNode recursive(ListNode head, ListNode newHead) {
+	        if (head == null) {
+	            return newHead;
+	        }
+	        ListNode tail = head.next;
+	        head.next = newHead;
+	        return recursive(tail, head);
+	    }
+
+
+
+### MergekSortedLists
+
+
+		public ListNode mergeKLists(ListNode[] lists) {
+	        if (lists.length == 0) {
+	            return null;
+	        }
+	        // base case lists.length = 1 or 2
+	        if (lists.length == 1) {
+	            return lists[0];
+	        }
+	        // divide
+	        int mid = lists.length / 2;
+	        ListNode[] left = Arrays.<ListNode>copyOfRange(lists, 0, mid);
+	        ListNode[] right = Arrays.<ListNode>copyOfRange(lists, mid, lists.length);
+	        
+	        // conquer & merge
+	        return mergeTwoLists(mergeKLists(left), mergeKLists(right));
+	    }
+	    
+	    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+	        if (l1 == null) {
+	            return l2;
+	        }
+	        if (l2 == null) {
+	            return l1;
+	        }
+	        if (l1.val <= l2.val) {
+	            l1.next = mergeTwoLists(l1.next, l2);
+	            return l1;
+	        } else {
+	            l2.next = mergeTwoLists(l1, l2.next);
+	            return l2;
+	        }
+	    }
+		
+
+
+### LinkedListCycle2
+找出 链表中环开始的结点，如果不存在环返回 null
+
+
+	    /**
+	     * http://www.cnblogs.com/hiddenfox/p/3408931.html
+	     * cycle head 结点 x 的特点是有两个指针指向它，
+	     * 画出一个 带环的链表，两条路径只可能是从 表头指向 x，从环指向 x
+	     * slow/fast 指针肯定会在环中的某处相遇
+	     * 
+	     * */
+	    public ListNode detectCycle(ListNode head) {
+	        if (head == null) {
+	            return head;
+	        }
+	        ListNode slow = head;
+	        ListNode fast = head;
+	
+	        while (fast != null && fast.next != null) {
+	            fast = fast.next.next;
+	            slow = slow.next;
+	
+	            if (fast == slow) {
+	                ListNode ph = head;
+	                while (ph != slow) {
+	                    slow = slow.next;
+	                    ph = ph.next;
+	                }
+	                return slow;
+	            }
+	        }
+	        return null;
+	    }	
+
+
+
+### LinkedListCycle
+判断链表是否有环
+
+	    public boolean hasCycle(ListNode head) {
+	        if (head == null) {
+	            return false;
+	        }
+	        ListNode slow = head;
+	        ListNode fast = head.next;
+	        while (slow != null && fast != null) {
+	            slow = slow.next;
+	            fast = fast.next;
+	            if (fast != null) {
+	                fast = fast.next;
+	            }
+	            if (slow == fast) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    }
+	    
+
+
+
+### IntersectionofTwoLinkedLists
+找到两个链表相交的点。
+
+* constraints1: 如果没有交点，返回 null
+* 2: 链表需要维持原来的结构
+* 3： 没有环
+* 4：time = O(n), space = O(1)
+
+
+
+	    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+	        int lenA = length(headA), lenB = length(headB);
+	        // move headA and headB to the same start point
+	        while (lenA > lenB) {
+	            headA = headA.next;
+	            lenA--;
+	        }
+	        while (lenA < lenB) {
+	            headB = headB.next;
+	            lenB--;
+	        }
+	        // find the intersection until end
+	        while (headA != headB) {
+	            headA = headA.next;
+	            headB = headB.next;
+	        }
+	        return headA;
+	    }
+
+
+### CopyListwithRandomPointer
+A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
+Return a deep copy of the list.
+
+	
+	    public RandomListNode copyRandomListFromSolutions(RandomListNode head) {
+	        if (head == null) return null;
+	
+	        Map<RandomListNode, RandomListNode> map = new HashMap<RandomListNode, RandomListNode>();
+	
+	        // loop 1. copy all the nodes
+	        RandomListNode node = head;
+	        while (node != null) {
+	            map.put(node, new RandomListNode(node.label));
+	            node = node.next;
+	        }
+	
+	        // loop 2. assign next and random pointers
+	        node = head;
+	        while (node != null) {
+	            map.get(node).next = map.get(node.next);
+	            map.get(node).random = map.get(node.random);
+	            node = node.next;
+	        }
+	
+	        return map.get(head);
+	    }
+
+
+
+### AddTwoNumbers2
+在 AddTwoNumbers 修改条件，最高位在 左边
+
+* idea: 将输处链表反转再 使用 AddTwoNumbers 的解法。
+* idea2: 使用两个 stack
+
+	    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+	        Stack<Integer> s1 = new Stack<Integer>();
+	        Stack<Integer> s2 = new Stack<Integer>();
+	
+	        while (l1 != null) {
+	            s1.push(l1.val);
+	            l1 = l1.next;
+	        } ;
+	        while (l2 != null) {
+	            s2.push(l2.val);
+	            l2 = l2.next;
+	        }
+	
+	        int sum = 0;
+	        ListNode list = new ListNode(0);
+	        while (!s1.empty() || !s2.empty()) {
+	            if (!s1.empty()) sum += s1.pop();
+	            if (!s2.empty()) sum += s2.pop();
+	            list.val = sum % 10;
+	            ListNode head = new ListNode(sum / 10);
+	            head.next = list;
+	            list = head;
+	            sum /= 10;
+	        }
+	
+	        return list.val == 0 ? list.next : list;
+	    }
+
+
+
+### AddTwoNumbers
+给定两个非空链表表示的非负整数，每个node 表示一个数位，将两个数相加当一个链表返回。
+
+Input: `(2 -> 4 -> 3) + (5 -> 6 -> 4)`
+Output: `7 -> 0 -> 8`
+
+
+		public ListNode addTwoNumbers20170826(ListNode l1, ListNode l2) {
+	        return add(l1, l2, 0);
+	    }
+	    
+	    private ListNode add(ListNode l1, ListNode l2, int carry) {
+	        if (l1 == null && l2 == null) {
+	            return (carry == 0) ? null : new ListNode(carry);
+	        }
+	        
+	        int sum = (l1 == null ? 0 : l1.val) + (l2 == null ? 0 : l2.val) + carry;
+	        int v = sum % 10;
+	        carry = sum >= 10 ? 1 : 0;
+	        ListNode node = new ListNode(v);
+	        node.next = add(l1 == null ? null : l1.next, l2 == null ? null : l2.next, carry);
+	        return node;
+	    }
+
+
+
+
 ## 动态规划
 
 
-
 ### UniquePaths
+给定 m * n 的矩阵，求从左上角走到右下角有多少条路径。每一步可以向右或向下移动。
+
+    
+    public int uniquePaths20170826Accepted(int m, int n) {
+        int[][] cache = new int[m][n];
+        return dp(m - 1, n - 1, cache);
+    }
+    
+    private int dp(int m, int n, int[][] cache) {
+        if (m == 0 || n == 0) {// 第0 行，只有一条路径
+            cache[m][n] = 1;
+            return 1;
+        }
+        if (cache[m][n] != 0) {
+            return cache[m][n];
+        }
+        
+        int left = dp(m, n - 1, cache);
+        int up = dp(m - 1, n, cache);
+        cache[m][n] = left + up;
+        return cache[m][n];
+    }
+
 
 
 ### UniqueBinarySearchTrees
@@ -811,6 +1454,31 @@ Given a binary tree, determine if it is height-balanced. balanced: 每一个结�
 
 
 
+### KthSmallestElementinaBST
+bst 中找第k小的元素
+
+
+	    int kth = 0;
+	    int visited = 0;
+	    public int kthSmallest(TreeNode root, int k) {
+	        inorder(root, k);
+	        return kth;
+	    }
+	    
+	    private void inorder(TreeNode root, int k) {
+	        if (root == null) {
+	            return ;
+	        }
+	        inorder(root.left, k);
+	        visited += 1;
+	        if (k == visited) {
+	            kth = root.val;
+	            return ;
+	        }
+	        inorder(root.right, k);
+	    }
+
+
 ### UniqueBinarySearchTrees2
 Given an integer n, generate all structurally unique BST's (binary search trees) that store values 1...n。
 
@@ -849,6 +1517,33 @@ Given a BST with duplicates, find all the mode(s)
 
 
 * idea: 注意中序序列是有序的。本题与 从已排序数组里找 mode 元素基本一样。只是将 计算出现次数的代码插入到 递归遍历bst中。
+
+
+	    private void traverse(TreeNode root, List<Integer> list) {
+	        if (root == null) return;
+	        traverse(root.left, list);
+	        if (prev != null) {
+	            if (root.val == prev) {
+	                count++;
+	            } else {
+	                count = 1;
+	            }
+	        }
+	        if (count > max) {
+	            max = count;
+	            list.clear();
+	            list.add(root.val);
+	        } else if (count == max) {
+	            list.add(root.val);
+	        }
+	        prev = root.val;
+	        traverse(root.right, list);
+	    }
+	
+	    Integer prev = null;
+	    int count = 1;
+	    int max = 0;
+
 
 
 
@@ -1416,6 +2111,37 @@ base case1: rList.size == m*n, base case2: 一行，输出该行return，base ca
 从大到小排序。另 PriorityQueue 允许重复元素，根据题意 只将非重复元素加入 pq 即可。
 
 
+### findModeInSortedArray
+从一个有序数组里找出 mode 元素，mode元素：出现次数最多的元素。
 
 
+	{1, 2, 2, 3} r=[2]
+	{1, 2, 2, 3, 3, 5} r=[2, 3]
+	{1, 2, 3, 4} r=[1,2,3,4]
+	{1, 2, 2, 3, 3, 3, 5} r=[3]
 
+* idea: 相同元素必须相邻出现，挨个计数，遇到出现次数更多的更新 r 和max 即可。
+	
+	    public List<Integer> findModeInSortedArray(int[] nums) {
+	        List<Integer> r = new ArrayList<Integer>();
+	        int prev = nums[0];
+	        r.add(prev);
+	        int count = 1;
+	        int max = 1;
+	        for (int i = 1; i < nums.length; i++) {
+	            if (nums[i] == prev) {
+	                count++;
+	            } else {
+	                count = 1;
+	            }
+	            if (count > max) {// 新的mode
+	                r.clear();
+	                r.add(nums[i]);
+	                max = count;
+	            } else if (count == max) {
+	                r.add(nums[i]);
+	            }
+	            prev = nums[i];
+	        }
+	        return r;
+	    }
