@@ -2,19 +2,254 @@
 
 
 
+## Stack
+
+### MinStack
+
+	public class MinStack {
+	    
+	    private Deque<Integer> stack;
+	    private int min = Integer.MAX_VALUE;
+	    
+	    public MinStack() {
+	        this.stack = new LinkedList<Integer>();
+	    }
+	    
+	    public void push(int x) {
+	        if (x <= min) {
+	            min = x;
+	        }
+	        stack.push(x);
+	    }
+	    
+	    public void pop() {
+	        Integer top = stack.pop();
+	        if (top <= min) {// 剩余的元素里找最小的
+	            min = Integer.MAX_VALUE;
+	            Iterator<Integer> it = stack.iterator();
+	            while (it.hasNext()) {
+	                Integer e = it.next();
+	                min = (e <= min) ? e : min; 
+	            }
+	        }
+	    }
+	    
+	    public int top() {
+	        return stack.peek();
+	    }
+	    
+	    public int getMin() {
+	        return min;
+	    }
+	}
+
+
+
+## 字符串 String
+
+
+
+### ValidPalindrome
+判断是否回文串，只考虑数字，字符，忽略大小写。
+
+	
+	    public boolean isPalindrome(String s) {
+	        if (s == null) {
+	            return true;
+	        }
+	        StringBuilder input = new StringBuilder();
+	        for (int i = 0; i < s.length(); i++) {
+	            char c = s.charAt(i);
+	            if (Character.isDigit(c) || Character.isLetter(c)) {
+	                input.append(Character.toLowerCase(c));
+	            }
+	        }
+	        // edge casees
+	        if (input.length() <= 1) {
+	            return true;
+	        }
+	        // two pointers
+	        int left = 0;
+	        int right = input.length() - 1;
+	        while (left < right) {
+	            if (input.charAt(left) != input.charAt(right)) {
+	                return false;
+	            }
+	            left ++;
+	            right --;
+	        }
+	        return true;
+	    }
+
+
+### ReverseWordsinaString3
+翻转每个单词 
+
+	    public String reverseWords(String s) {
+	        StringBuilder sb = new StringBuilder(s);
+	        int left = 0;
+	        for (int i = 0; i <= s.length(); i++) {
+	            if (i == s.length() || s.charAt(i) == ' ') {
+	                reverse(sb, left, i - 1);
+	                left = i + 1;
+	            }
+	        }
+	        return sb.toString();
+	    }
+
+### ReverseWordsinaString2
+in-place: 不使用额外的存储空间
+
+	    public String reverseWords(String s) {
+	        StringBuilder sb = new StringBuilder(s);
+	        int left = 0;
+	        for (int i = 0; i <= s.length(); i++) {
+	            if (i == s.length() || s.charAt(i) == ' ') {
+	                reverse(sb, left, i - 1);
+	                left = i + 1;
+	            }
+	        }
+	        reverse(sb, 0, sb.length() - 1);
+	        return sb.toString();
+	    }
+	
+	    private void reverse(StringBuilder s, int l, int r) {
+	        while (l < r) {
+	            char t = s.charAt(r);
+	            s.setCharAt(r, s.charAt(l));
+	            s.setCharAt(l, t);
+	            l++;r--;
+	        }
+	    }
+
+
+### ReverseWordsinaString
+Given s = "the sky is blue". return "blue is sky the"
+	
+	    public String reverseWords(String s) {
+	        s = s.trim();
+	        String[] arr = s.split("\\s+");
+	        List<String> list = new LinkedList<String>();
+	        
+	        for (String word : arr) {
+	            list.add(0, word);
+	        }
+	        return String.join(" ", list.toArray(new String[list.size()]));
+	    }
+
+
+### LongestSubstringWithoutRepeatingCharacters
+给定字符串s 求最长没有重复字符的子串(对应的长度值)
+
+
+	// 设s[i,j] 为没有重复字符的子患，遍历所有可能
+    public int lengthOfLongestSubstring(String s) {
+        int i = 0, j = 0, max = 0;
+        Set<Character> set = new HashSet<>();
+
+        while (j < s.length()) {
+            if (!set.contains(s.charAt(j))) {
+                set.add(s.charAt(j++));
+                max = Math.max(max, set.size());
+            } else {
+                set.remove(s.charAt(i++));
+            }
+        }
+
+        return max;
+    }
+
+
+### LongestPalindromicSubstring
+求最长回文子串
 
 
 
 
+	    /**
+	     * 假设目标串(最长回文子串)为s[p-x, p+x]
+	     * 其中p取值范围是 1-len(s), x取值范围是1 - len(s)/2
+	     * 遍历所有可能的p, x值找出目标串
+	     * */
+	    private int lo, maxLen;
+	    public String longestPalindromeAccepted(String s) {
+	        int len = s.length();
+	        if (len < 2) {
+	            return s;
+	        }
+	        for (int i = 0; i < len-1; i++) {
+	            extendPalindrome(s, i, i);  //assume odd length, try to extend Palindrome as possible
+	            extendPalindrome(s, i, i+1); //assume even length.
+	        }
+	        return s.substring(lo, lo + maxLen);
+	    }
+	    private void extendPalindrome(String s, int j, int k) {
+	        while (j >= 0 && k < s.length() && s.charAt(j) == s.charAt(k)) {
+	            j--;
+	            k++;
+	        }
+	        if (maxLen < k - j - 1) {
+	            lo = j + 1;
+	            maxLen = k - j - 1;
+	        }
+	    }
 
 
 
 
+### FirstUniqueCharacterinaString
+Given a string, find the first non-repeating character in it and return it's index. If it doesn't exist, return -1.
+`s = "leetcode" return 0. s = "loveleetcode", return 2.`
+	
+	    public int firstUniqChar(String s) {
+	        int freq [] = new int[26];
+	        for(int i = 0; i < s.length(); i ++)
+	            freq [s.charAt(i) - 'a'] ++;
+	        for(int i = 0; i < s.length(); i ++)
+	            if(freq [s.charAt(i) - 'a'] == 1)
+	                return i;
+	        return -1;
+	    }
 
 
 
+### CompareVersionNumbers
+比较版本号
+`0.1 < 1.1 < 1.2 < 13.37`
+`1.0.0 = 1.0`
 
 
+		public int compareVersion(String v1, String v2) {
+	        String[] list1 = v1.split("\\.");
+	        String[] list2 = v2.split("\\.");
+	        if (list1.length <= list2.length) {
+	            return compare(list1, list2);
+	        } else {
+	            int r = compare(list2, list1);
+	            return -r;
+	        }
+	    }
+	
+	    private int compare(String[] shorter, String[] longer) {
+	        for (int i = 0; i < longer.length; i++) {
+	            if (i >= shorter.length) {
+	                Integer vl = Integer.valueOf(longer[i]);
+	                if (vl == 0) {
+	                    continue;
+	                }
+	                return -1;
+	            }
+	            
+	            int sub1 = Integer.valueOf(shorter[i]);
+	            int sub2 = Integer.valueOf(longer[i]);
+	            if (sub1 > sub2) {
+	                return 1;
+	            } else if (sub1 < sub2) {
+	                return -1;
+	            }
+	        }
+	        return 0;
+	    }
 
 
 ## 链表 LinkedList
@@ -679,7 +914,45 @@ Given n, how many structurally unique BST's that store values 1...n? n = 3, 5种
 		        return ways;
 		    }
 
+### WordBreak2
+给定字符串s和字典 dict，求所有可能的句子，`eg. s = catsanddog, dict = ["cat", "cats", "and", "sand", "dog"]`
 
+
+	
+	    /**
+	     * 思路：backtrack
+	     * 每层尝试从 s 中吃掉一个 dict里的单词，直到s 为empty，输出一个 sentence
+	     * */
+	    public List<String> wordBreak(String s, List<String> dict) {
+	        return backtrack(s, dict);
+	    }
+	
+	    private List<String> backtrack(String s, List<String> dict) {
+	        // from cache
+	        if (cache.containsKey(s)) {
+	            return cache.get(s);
+	        }
+	        // base case: s == empty
+	        LinkedList<String> rs = new LinkedList<String>();
+	        if ("".equals(s)) {
+	            rs.add("");
+	            return rs;
+	        }
+	        // backtrack
+	        for (String word : dict) {
+	            if (!s.startsWith(word)) {
+	                continue;
+	            }
+	            int idx = word.length();// catsanddog
+	            String sub = s.substring(idx);// sanddog
+	            List<String> subRs = backtrack(sub, dict);
+	            for (String e : subRs) {
+	                rs.add(word + (e.isEmpty() ? "" : " ") + e);
+	            }
+	        }
+	        cache.put(s, rs);
+	        return rs;
+	    }
 
 
 ### WordBreak
@@ -690,7 +963,6 @@ s = successprogrammer return false。
 
 * idea: 交叉子问题暗示用dp 解法，考虑一个子问题，对 dict中的单词word，只要 s.endsWith(word) 且 s-word 也可以分割，那
 s 就是可以被分割的。递归式为 dp(s) = e in dict && s.endsWith(e) && dp(s-e)，加入 memoization 当缓存，直接根据递归式写代码即可。
-
 
 	
 	    private boolean dp2(String s, List<String> dict, int n, Boolean[] t) {
