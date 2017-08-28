@@ -335,8 +335,6 @@ Sort a linked list in O(n log n) time using constant space complexity
 	
 
 
-
-
 ### RotateList
 
 	Given a list, rotate the list to the right by k places, where k is non-negative.
@@ -382,7 +380,7 @@ Sort a linked list in O(n log n) time using constant space complexity
 	    }
     
 
-### ReverseLinkedList2 not accepted
+### ReverseLinkedList2
 Reverse a linked list from position m to n. Do it in-place and in one-pass.
 For example:
 	
@@ -390,6 +388,37 @@ For example:
 		return 1->4->3->2->5->NULL. 
 
 
+	    public ListNode reverseBetween(ListNode head, int m, int n) {
+	        if (m == n) {
+	            return head;
+	        }
+	        ListNode sentinel = new ListNode(0);
+	        sentinel.next = head;
+	        ListNode mp = sentinel;
+	        ListNode np = sentinel;
+	        for (int i = 0; i < m - 1; i++) {
+	            mp = mp.next;
+	        }// mP.next = oldHead
+	        
+	        for (int i = 0; i < n; i++) {
+	            np = np.next;
+	        }
+	        ListNode oldHead = mp.next;
+	        ListNode rest = np.next;
+	        np.next = null;
+	        mp.next = reverse(oldHead, null);
+	        oldHead.next = rest;
+	        return sentinel.next;
+	    }
+	    
+	    private ListNode reverse(ListNode head, ListNode newHead) {
+	        if (head == null) {
+	            return newHead;
+	        }
+	        ListNode next = head.next;
+	        head.next = newHead;
+	        return reverse(next, head);
+	    }
 
 
 ### ReverseLinkedList 链表反转
@@ -398,7 +427,8 @@ For example:
 	    /**
 	     * p为指向旧list的指针，p向右移动直到null
 	     * newHead 指向新list 头部，newHead 一直向左
-	     * 初始调用 reverseIterative(head, null)
+	     * 初始调用 
+	     * Iterative(head, null)
 	     * */
 	    private ListNode reverseIterative(ListNode head, ListNode newHead) {
 	        ListNode p = head;
@@ -411,15 +441,6 @@ For example:
 	        return newHead;
 	    }
 	
-	
-	    private ListNode reverseRecursive(ListNode head, ListNode newHead) {
-	        if (head == null) {
-	            return newHead;
-	        }
-	        ListNode next = head.next;
-	        head.next = newHead;
-	        return reverseRecursive(next, head);
-	    }
 
 
 ### ReorderList
