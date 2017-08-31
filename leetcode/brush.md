@@ -4,6 +4,99 @@
 
 ## Stack
 
+
+
+### EvaluateReversePolishNotation
+
+
+	    public int evalRPN(String[] tokens) {
+	        Deque<Integer> s = new LinkedList<Integer>();
+	        Set<String> opts = new HashSet<>();
+	        opts.add("+");opts.add("-");opts.add("*");opts.add("/");
+	        for (String t : tokens) {
+	            if (opts.contains(t)) {
+	                Integer right = s.pop();
+	                Integer left = s.pop();
+	                switch (t) {
+	                    case "+":
+	                        s.push(left + right);
+	                        break;
+	                    case "-":
+	                        s.push(left - right);
+	                        break;
+	                    case "*":
+	                        s.push(left * right);
+	                        break;
+	                    case "/":
+	                        s.push(left / right);
+	                        break;
+	                    default:
+	                        break;
+	                }
+	            } else {
+	                s.push(Integer.valueOf(t));
+	            }
+	        }
+	        
+	        return s.peek();
+	    }
+
+
+### BinarySearchTreeIterator
+
+	    class BSTIterator {
+	        Deque<TreeNode> stack = new LinkedList<>();
+	
+	        public BSTIterator(TreeNode root) {
+	            // init: p 指向当前最小结点，stack 保存从root到p 路径中所有parent
+	            TreeNode p = root;
+	            while (p != null) {
+	                stack.push(p);
+	                if (p.left != null) {
+	                    p = p.left;
+	                } else break;
+	            }
+	        }
+	
+	        /** @return whether we have a next smallest number */
+	        public boolean hasNext() {
+	            return !stack.isEmpty();
+	        }
+	
+	        /** @return the next smallest number */
+	        public int next() {
+	            TreeNode top = stack.pop();
+	            // 求 top.successor
+	            TreeNode p = top;
+	            if (p.right != null) {
+	                p = p.right;
+	                while (p != null) {
+	                    stack.push(p);
+	                    if (p.left != null) {
+	                        p = p.left;
+	                    } else break;
+	                }
+	            }
+	            return top.val;
+	        }
+	    }
+
+
+### SortStack
+使用push/pop/peek 操作给一个栈排序
+
+
+        Deque<Integer> r = new LinkedList<Integer>();
+        while (!s.isEmpty()) {
+            int tmp = s.pop();
+            while (!r.isEmpty() && r.peek() > tmp) {
+                s.push(r.pop());
+            }
+            r.push(tmp);
+        }
+        return r;
+
+
 ### MinStack
 
 	public class MinStack {
@@ -46,7 +139,6 @@
 
 
 ## 字符串 String
-
 
 
 ### ValidPalindrome
