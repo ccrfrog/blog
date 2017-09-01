@@ -1,9 +1,81 @@
 
 
 
-
 ## Stack
 
+
+
+
+###ImplementStackusingQueues
+
+		public class MyStack {
+	        Queue<Integer> q = new LinkedList<Integer>();
+	        public MyStack() {
+	        }
+	        
+	        /**
+	         * x 加入队列，x 放到队头
+	         * [1, 2, 3] + 4 => [1, 2, 3, 4] => [4, 1, 2, 3]
+	         * */
+	        public void push(int x) {
+	            q.offer(x);
+	            for (int i = 0; i < q.size() - 1; i++) {
+	                q.offer(q.poll());
+	            }
+	        }
+	        
+	        /**直接 poll 即可*/
+	        public int pop() {
+	            return q.poll();
+	        }
+	        
+	        public int top() {
+	            return q.peek();
+	        }
+	        
+	        public boolean empty() {
+	            return q.isEmpty();
+	        }
+	    }
+
+
+### ImplementQueueusingStacks
+
+	
+	    class MyQueue {
+	        Deque<Integer> s1 = new LinkedList<Integer>();
+	        Deque<Integer> s2 = new LinkedList<Integer>();
+	        Integer front = null;
+	        public MyQueue() {
+	        }
+	        
+	        public void push(int x) {
+	            if (s1.size() == 0) {
+	                front = x;
+	            }
+	            s1.push(x);
+	        }
+	        
+	        public int pop() {
+	            while (!s1.isEmpty()) {
+	                s2.push(s1.pop());
+	            }
+	            Integer top = s2.pop();
+	            front = s2.peek();
+	            while (!s2.isEmpty()) {
+	                s1.push(s2.pop());
+	            }
+	            return top;
+	        }
+	        
+	        public int peek() {
+	            return front;
+	        }
+	        
+	        public boolean empty() {
+	            return s1.isEmpty();
+	        }
+	    }
 
 
 ### EvaluateReversePolishNotation
@@ -86,13 +158,16 @@
 使用push/pop/peek 操作给一个栈排序
 
 
+* idea: 新建一个 stack r 保存排序后的结果。那么 外层循环变成了当s 不为空时出栈，将较小的元素push 到 r。
+
+
         Deque<Integer> r = new LinkedList<Integer>();
         while (!s.isEmpty()) {
-            int tmp = s.pop();
-            while (!r.isEmpty() && r.peek() > tmp) {
+            int top = s.pop();
+            while (!r.isEmpty() && r.peek() > top) {
                 s.push(r.pop());
             }
-            r.push(tmp);
+            r.push(top);
         }
         return r;
 
@@ -254,8 +329,6 @@ Given s = "the sky is blue". return "blue is sky the"
 
 ### LongestPalindromicSubstring
 求最长回文子串
-
-
 
 
 	    /**
@@ -2054,6 +2127,40 @@ n is a non-negative integer and fits within the range of a 32-bit signed integer
 
 
 ## Backtracking
+
+### BattleshipsinaBoard
+给定二维数组，计算其中 battleship 个数。battleship 由 x 表示，空位用. 表示，约束条件如下
+battleship 占用 1*n 或者 n*1 个位置，n 的大小可变。至少有一个 空位分隔不同的 battleship
+
+* constraints: 因为 至少有一个 空位分隔不同的 battleship 这个约束的存在，本题变得很简单。
+* idea: 计算 每个battleship 的 左上角X 的个数即可，需要满足 X 的左边和上方都不是 X
+
+
+	    /**
+	     * 根据约束条件 空位分隔不同的 battleship，只需数一下 左边，上边为. 的 x 个数即可
+	     *  
+	     * */
+	    public int countBattleships(char[][] board) {
+	        int r = 0;
+	        for (int i = 0; i < board.length; i++) {
+	            for (int j = 0; j < board[0].length; j++) {
+	                char cell = board[i][j];
+	                if (j - 1 >= 0 && board[i][j - 1] == 'X') {
+	                    continue;
+	                }
+	                if (i - 1 >= 0 && board[i - 1][j] == 'X') {
+	                    continue;
+	                }
+	                if (cell == '.') {
+	                    continue;
+	                }
+	                r += 1;
+	            }
+	        }
+	        return r;
+	    } 
+
+
 
 ### WordSearch(高频)
 给定2维数组board 和单词 word ，判断word 是否在board 顺序相邻的cell 里存在
