@@ -1,12 +1,200 @@
 
 
 
+
+## Trie
+
+
+### LongestCommonPrefix
+给定一个字符串数组，返回这些字符串的最长公共前缀
+`{leets, leetcode, leet, leeds}, r = lee`
+
+	
+	    public String longestCommonPrefixAccepted(String[] strs) {
+	        Trie trie = new Trie();
+	        for (String s : strs) {
+	            if ("".equals(s)) {
+	                return "";
+	            }
+	            trie.insert(s);
+	        }
+	        return trie.prefix();
+	    }
+
+        public String prefix() {
+            TrieNode p = root;
+            StringBuilder prefix = new StringBuilder();
+            while (p.children.size() == 1) {
+                Set<Character> keys = p.children.keySet();
+                Iterator<Character> it = keys.iterator();
+                char key = ' ';
+                while (it.hasNext()) {
+                    key = it.next();
+                    prefix.append(key);
+                }
+                p = p.children.get(key);
+                if (p.isLeaf) {
+                    break;
+                }
+            }
+            return prefix.toString();
+        }
+
+
+### AddandSearchWord
+
+实现一个数据结构，支持以下两种操作
+
+		void addWord(word)
+		bool search(word)，其中search word 支持 a-z 和通配符. . 表示任意一个字符
+
+	
+	    public boolean search(String query) {
+	        return search(trie.root, query, 0);
+	    }
+	    
+	    private boolean search(TrieNode root, String query, int t) {
+	        // base case:
+	        if (t == query.length()) {
+	            return root.isWord;
+	        }
+	        
+	        List<TrieNode> pSet = new ArrayList<TrieNode>();
+	        char c = query.charAt(t);
+	        if (c == '.') {
+	            for (TrieNode child : root.children) {
+	                if (child != null) {
+	                    pSet.add(child);
+	                }
+	            }
+	        } else {
+	            TrieNode child = root.children[c - 'a'];
+	            if (child == null) {
+	                return false;
+	            }
+	            pSet.add(child);
+	        }
+	        
+	        boolean r = false;
+	        for (TrieNode branch : pSet) {
+	            r = r || search(branch, query, t + 1);
+	        }
+	        
+	        return r;
+	    }
+
+
+### ImplementTrie
+
+	
+	class TrieNode {
+	    public char val;
+	    public boolean isWord;
+	    public TrieNode[] children = new TrieNode[26];
+	    public TrieNode() {
+	    }
+	    TrieNode(char c) {
+	        TrieNode node = new TrieNode();
+	        node.val = c;
+	    }
+	}
+	
+	public class Trie {
+	    private TrieNode root;
+	    public Trie() {
+	        root = new TrieNode();
+	        root.val = ' ';
+	    }
+	
+	    public void insert(String word) {
+	        TrieNode ws = root;
+	        for (int i = 0; i < word.length(); i++) {
+	            char c = word.charAt(i);
+	            if (ws.children[c - 'a'] == null) {
+	                ws.children[c - 'a'] = new TrieNode(c);
+	            }
+	            ws = ws.children[c - 'a'];
+	        }
+	        ws.isWord = true;
+	    }
+	
+	    public boolean search(String word) {
+	        TrieNode ws = root;
+	        for (int i = 0; i < word.length(); i++) {
+	            char c = word.charAt(i);
+	            if (ws.children[c - 'a'] == null) return false;
+	            ws = ws.children[c - 'a'];
+	        }
+	        return ws.isWord;
+	    }
+	
+	    public boolean startsWith(String prefix) {
+	        TrieNode ws = root;
+	        for (int i = 0; i < prefix.length(); i++) {
+	            char c = prefix.charAt(i);
+	            if (ws.children[c - 'a'] == null) return false;
+	            ws = ws.children[c - 'a'];
+	        }
+	        return true;
+	    }
+	}
+	
+
+## Math
+
+### IntegertoEnglishWords
+将数字转成英文单词，输入数字 n 不超过 2^31
+
+		 123 -> "One Hundred Twenty Three"
+		 12345 -> "Twelve Thousand Three Hundred Forty Five"
+		 1234567 -> "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
+
+	
+	
+	    private final String[] LESS_THAN_20 = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+	            "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen",
+	            "Nineteen" };
+	
+	    private final String[] TENS = { "", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty",
+	            "Ninety" };
+	
+	    private final String[] THOUSANDS = { "", "Thousand", "Million", "Billion" };
+	
+	    public String numberToWords(int num) {
+	        if (num == 0) return "Zero";
+	
+	        int i = 0;
+	        String words = "";
+	
+	        while (num > 0) {// 外层循环计算有多少个 千
+	            if (num % 1000 != 0) {
+	                words = helper(num % 1000) + THOUSANDS[i] + " " + words;
+	            }
+	            num /= 1000;
+	            i++;
+	        }
+	
+	        return words.trim();
+	    }
+	
+	    // helper 计算千以下的转换
+	    private String helper(int num) {
+	        if (num == 0) {
+	            return "";
+	        } else if (num < 20) {
+	            return LESS_THAN_20[num] + " ";
+	        } else if (num < 100) {
+	            return TENS[num / 10] + " " + helper(num % 10);
+	        } else {
+	            return LESS_THAN_20[num / 100] + " Hundred " + helper(num % 100);
+	        }
+	    }
+
+
+
 ## Stack
 
-
-
-
-###ImplementStackusingQueues
+### ImplementStackusingQueues
 
 		public class MyStack {
 	        Queue<Integer> q = new LinkedList<Integer>();
@@ -2160,6 +2348,61 @@ battleship 占用 1*n 或者 n*1 个位置，n 的大小可变。至少有一个
 	        return r;
 	    } 
 
+
+### WordSearch2
+在 WordSearch 的基础上，给定包含多个单词的dict ，找出 dict 里所有出现在 board里的单词
+
+
+	    public List<String> findWords(char[][] board, String[] words) {
+	        List<String> res = new ArrayList<>();
+	        TrieNode root = buildTrie(words);
+	        for (int i = 0; i < board.length; i++) {
+	            for (int j = 0; j < board[0].length; j++) {
+	                dfs(board, i, j, root, res);
+	            }
+	        }
+	        return res;
+	    }
+	
+	    public void dfs(char[][] board, int i, int j, TrieNode p, List<String> res) {
+	        char c = board[i][j];
+	        if (c == '#' || p.next[c - 'a'] == null) {
+	            return;
+	        }
+	        p = p.next[c - 'a'];
+	        if (p.word != null) {   // found one
+	            res.add(p.word);
+	            p.word = null;     // de-duplicate
+	        }
+	
+	        board[i][j] = '#';
+	        if (i > 0) dfs(board, i - 1, j ,p, res); 
+	        if (j > 0) dfs(board, i, j - 1, p, res);
+	        if (i < board.length - 1) dfs(board, i + 1, j, p, res); 
+	        if (j < board[0].length - 1) dfs(board, i, j + 1, p, res); 
+	        board[i][j] = c;
+	    }
+	
+	    public TrieNode buildTrie(String[] words) {
+	        TrieNode root = new TrieNode();
+	        for (String w : words) {
+	            TrieNode p = root;
+	            for (char c : w.toCharArray()) {
+	                int i = c - 'a';
+	                if (p.next[i] == null) {
+	                    p.next[i] = new TrieNode();
+	                }
+	                p = p.next[i];
+	           }
+	           p.word = w;
+	        }
+	        return root;
+	    }
+	    
+	    class TrieNode {
+	        TrieNode[] next = new TrieNode[26];
+	        String word;
+	    }
 
 
 ### WordSearch(高频)
