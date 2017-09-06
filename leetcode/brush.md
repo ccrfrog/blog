@@ -2,8 +2,42 @@
 
 
 
-## Trie
 
+
+
+
+
+
+
+
+
+
+## Bit Manipulation
+
+
+
+
+### HammingDistance
+
+    public int hammingDistance(int x, int y) {
+        return Integer.bitCount(x ^ y);
+    }
+
+### Numberof1Bits
+
+
+    // 求n 的二进制表示中 1 的个数
+    public int hammingWeight(int n) {
+        int ones = 0;
+        while (n != 0) {
+            ones = ones + (n & 1);
+            n = n >>> 1;
+        }
+        return ones;
+    }
+
+
+## Trie
 
 ### LongestCommonPrefix
 给定一个字符串数组，返回这些字符串的最长公共前缀
@@ -193,6 +227,32 @@
 
 
 ## Stack
+
+
+### SimplifyPath
+给出一个UNIX 文件系统路径，将它简化
+
+
+    public String simplifyPath(String path) {
+        Deque<String> s = new LinkedList<String>();
+        for (String dir : path.split("/")) {
+            if ("".equals(dir) || ".".equals(dir)) {
+                continue;
+            } else if ("..".equals(dir)) {
+                if (!s.isEmpty()) {
+                    s.pop();
+                }
+            } else {
+                s.push(dir);
+            }
+        }
+        StringBuilder r = new StringBuilder();
+        while (!s.isEmpty()) {
+            r.append("/").append(s.removeLast());
+        }
+        return r.length() == 0 ? "/" : r.toString();
+    }
+
 
 ### ImplementStackusingQueues
 
