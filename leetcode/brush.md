@@ -12,6 +12,9 @@
 
 
 
+
+
+
 ## Bit Manipulation
 
 
@@ -1932,6 +1935,51 @@ http://bookshadow.com/weblog/2016/11/22/leetcode-lfu-cache/
 
 
 ## 深度优先搜索DFS
+
+
+### BinaryTreeMaximumPathSum
+Given a binary tree, find the maximum path sum.
+
+* idea: 按路径是否经过root 分两种情况，1不经过root，此时 最大路径和为root到左子树或右子树某个结点的和 max(left.singlePath, right.singlePath)，
+2 经过root，此时 目标值为 left.singlePath + right.singlePath + root.val，这两种情况的较大值即为目标值。dfs 求 这两个值。
+
+
+
+	    public int maxPathSum(TreeNode root) {
+	        return dfs(root).maxPath;
+	    }
+	
+	    private ResultType dfs(TreeNode root) {
+	        if (root == null) {
+	            return new ResultType(0, Integer.MIN_VALUE);
+	        }
+	        // Divide
+	        ResultType left = dfs(root.left);
+	        ResultType right = dfs(root.right);
+	        
+	        // Conquer
+	        int singlePath = Math.max(left.singlePath, right.singlePath) + root.val;
+	        singlePath = Math.max(singlePath, 0);
+	        
+	        int maxPath = Math.max(left.maxPath, right.maxPath);
+	        maxPath = Math.max(maxPath, left.singlePath + right.singlePath + root.val);
+	
+	        return new ResultType(singlePath, maxPath);
+	    }
+	
+	    
+	    class ResultType {
+	        // singlePath: 从root往下走到任意点的最大路径，这条路径可以不包含任何点
+	        // maxPath: 从树中任意到任意点的最大路径，这条路径至少包含一个点
+	        int singlePath;
+	        int maxPath;
+	        public ResultType(int singlePath, int maxPath) {
+	            this.singlePath = singlePath;
+	            this.maxPath = maxPath;
+	        }
+	    }
+
+
 
 ### SumRoottoLeafNumbers
 Given a binary tree containing digits from 0-9 only, each root-to-leaf path could represent a number.
