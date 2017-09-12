@@ -2742,6 +2742,85 @@ Given a set of distinct integers, nums, return all possible subsets
 
 ## Array
 
+### MergeIntervals
+Given a collection of intervals, merge all overlapping intervals.
+Given [1,3],[2,6],[8,10],[15,18],
+return [1,6],[8,10],[15,18]
+
+
+    public List<Interval> merge(List<Interval> intervals) {
+        if (intervals.size() <= 1) return intervals;
+
+        // Sort by ascending starting point using an anonymous Comparator
+        intervals.sort((i1, i2) -> Integer.compare(i1.start, i2.start));
+
+        List<Interval> result = new LinkedList<Interval>();
+        int start = intervals.get(0).start;
+        int end = intervals.get(0).end;
+
+        for (Interval interval : intervals) {
+            if (interval.start <= end) // Overlapping intervals, move the end if needed
+                end = Math.max(end, interval.end);
+            else { // Disjoint intervals, add the previous one and reset bounds
+                result.add(new Interval(start, end));
+                start = interval.start;
+                end = interval.end;
+            }
+        }
+
+        // Add the last interval
+        result.add(new Interval(start, end));
+        return result;
+    }
+
+	
+
+### InsertInterval
+给定一组不相交的 interval list，将一个新的 interval 插入 list中
+有必要的话 merge 使得 list 中的 interval 都是不相交的。
+假设 输出参数 list 已经按 interval.start 排好序。
+eg. Given intervals `[1,3],[6,9]`, `insert and merge [2,5] in as [1,5],[6,9]`
+
+
+    public List<Interval> insert0912Accepted(List<Interval> intervals, Interval newInterval) {
+        if (intervals.size() == 0) {
+            intervals.add(newInterval);
+            return intervals;
+        }
+        for (int i = 0; i < intervals.size(); i++) {
+            Interval current = intervals.get(i);
+            if (current.start > newInterval.end) {
+                break;
+            }
+            
+            if (!nonOverlap(current, newInterval)) {// 相交求新 interval
+                newInterval.start = Math.min(current.start, newInterval.start);
+                newInterval.end = Math.max(current.end, newInterval.end);
+            }
+        }
+        List<Interval> r = new ArrayList<Interval>();
+        for (int i = 0; i < intervals.size(); i++) {
+            Interval current = intervals.get(i);
+            if (nonOverlap(current, newInterval)) {
+                if (current.start > newInterval.end 
+                        && !r.contains(newInterval)) {
+                    r.add(newInterval);
+                }
+                r.add(current);
+            }
+        }
+        if (!r.contains(newInterval)) {//for 循环里可以处理 左边界情况，右边界需要另处理
+            r.add(newInterval);
+        }
+        return r;
+    }
+    
+    public boolean nonOverlap(Interval a, Interval b) {
+        return a.end < b.start || b.end < a.start;
+    }
+
+
+
 ### TwoSum
 
 给定数组nums 和值 target，判断是否存在`nums[i] + nums[j] = target`
