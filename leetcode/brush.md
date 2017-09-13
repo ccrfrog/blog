@@ -1870,7 +1870,6 @@ The majority element is the element that appears more than ⌊ n/2 ⌋ times
 
 
 
-
 ### ExpressionAddOperators
 给定一个仅包含数字0-9的字符串，和一个目标值 target，返回所有可能的加操作符方式 使得表达式的值为 target
 	
@@ -2019,6 +2018,23 @@ Given the below binary tree and sum = 22
 return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22
 
 
+	    private void dfs(TreeNode root, int pathSum, int target, List<Boolean> rs) {
+	        if (root.left == null && root.right == null) {
+	            if (pathSum + root.val == target) {
+	                rs.add(Boolean.TRUE);
+	            } else {
+	                rs.add(Boolean.FALSE);
+	            }
+	            return ;
+	        }
+	        if (root.left != null) {
+	            dfs(root.left, pathSum + root.val, target, rs);
+	        }
+	        if (root.right != null) {
+	            dfs(root.right, pathSum + root.val, target, rs);
+	        }
+	    }
+
 ### NumberofIslands
 Given a 2d grid map of '1's (land) and '0's (water), count the number of islands.
 This method approaches the problem as one of depth-first connected components search
@@ -2040,6 +2056,46 @@ This method approaches the problem as one of depth-first connected components se
 
 		    public int numIslands(char[][] grid) {}
 
+
+    public int numIslands(char[][] grid) {
+        // Store the given grid
+        // This prevents having to make copies during recursion
+        g = grid;
+        // Our count to return
+        int c = 0;
+        // Dimensions of the given graph
+        y = g.length;
+        if (y == 0) return 0;
+        x = g[0].length;
+        // Iterate over the entire given grid
+        for (int i = 0; i < y; i++) {
+            for (int j = 0; j < x; j++) {
+                if (g[i][j] == '1') {
+                    dfs(i, j);
+                    c++;
+                }
+            }
+        }
+        return c;
+    }
+
+
+    private void dfs(int i, int j) {
+        // Check for invalid indices and for sites that aren't land
+        if (i < 0 || i >= y || j < 0 || j >= x || g[i][j] != '1') return;
+        // Mark the site as visited
+        g[i][j] = '0';
+        // Check all adjacent sites
+        dfs(i + 1, j);
+        dfs(i - 1, j);
+        dfs(i, j + 1);
+        dfs(i, j - 1);
+    }
+
+    int y; // The height of the given grid
+    int x; // The width of the given grid
+    char[][] g; // The given grid, stored to reduce recursion memory usage
+    
 
 
 ### MaximumDepthofBinaryTree
@@ -2402,6 +2458,25 @@ notice: `num[-1] = num[n] = -∞`
 * idea: 写几个case 看看。要求用 logN 时间解。比较 mid与 mid-1/mid+1，然后分别只需考虑左半部分，右半部分
 * base case: length=1, length=2
 
+
+	    private int find(int[] nums, int low, int high) {
+	        int len = high - low + 1;
+	        if (len == 1) {
+	            return low;
+	        }
+	        if (len == 2) {// 这样写保证后续 nums 至少有3个元素 mid-1 不会越界
+	            return nums[low] > nums[high] ? low : high;
+	        }
+	        int mid = low + (high - low) / 2;
+	        if (nums[mid] > nums[mid-1] && nums[mid] > nums[mid + 1]) {
+	            return mid;
+	        } else if (nums[mid] > nums[mid-1] ) {// 从右边部分找
+	            return find(nums, mid + 1, high);
+	        } else {
+	            return find(nums, low, high - 1);
+	        }
+	        
+	    }
 
 
 ### SearchinRotatedSortedArray
@@ -3023,6 +3098,48 @@ Given a matrix of m x n elements，以螺旋形式返回 矩阵里的元素。�
 初始调用为 `spiral2(matrix, 0, list, m*n);`
 
 base case1: rList.size == m*n, base case2: 一行，输出该行return，base case3: 一列，输出该列return。
+
+
+		private void spiral2(int[][] matrix, int level, List<Integer> list, int size) {
+	        //base case1
+	        if (list.size() == size) {
+	            return ;
+	        }
+	        int a = level; int b = level;
+	        int x = matrix.length - level - 1;
+	        int y = matrix[0].length -level - 1;
+	        //base case2: 一行
+	        if (a == x) {
+	            for (int column = b; column <= y; column++) {//->
+	                list.add(matrix[a][column]);
+	            }
+	            return ;
+	        }
+	        //base case3: 一列
+	        if (b == y) {
+	            for (int row = a; row <= x; row++) {
+	                list.add(matrix[row][b]);
+	            }
+	            return ;
+	        }
+	        int row = a; int column = b;
+	        for (; column <= y; column++) {//->
+	            list.add(matrix[row][column]);
+	        }
+	        column--;
+	        for (row = a + 1; row <= x; row++) {//down
+	            list.add(matrix[row][column]);
+	        }
+	        row--;
+	        for (column = y - 1; column >= b; column--) {// <-
+	            list.add(matrix[row][column]);
+	        }
+	        column++;
+	        for (row = x - 1; row > a; row--) {//up
+	            list.add(matrix[row][column]);
+	        }
+	        spiral2(matrix, level + 1, list, size);
+	    }
 
 
 ### ThirdMaximumNumber
