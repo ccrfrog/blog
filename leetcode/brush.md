@@ -9,7 +9,7 @@
 
 
 
-
+http://www.cnblogs.com/grandyang/p/5628836.html
 
 
 
@@ -1296,6 +1296,63 @@ Output: `7 -> 0 -> 8`
 
 
 ## 动态规划
+
+### HouseRobber2
+在 HouseRobber 的基础上增加限制条件：所有的房子连成了一个圈
+* idea: 解开环，分别考虑选头，选尾的情况，算两遍取最大值即可
+
+
+
+
+### HouseRobber
+给定非负整数数组， 取不相邻的元素使其和最大。求和的最大值
+
+
+	    /**
+	     * 最后一次rob 要么是 idx n-1, 要么是 n-2
+	     * 设m[i] 为位置i 对应的最大值
+	     * m[i] = max {m[i-2] + nums[i],
+	     *                  m[i-1]}
+	     * base case:
+	     *         idx = 0: nums[0]
+	     *         idx = 1: max{nums[0], nums[1]}
+	     * */
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int[] m = new int[nums.length];
+        for (int i = 0; i<m.length; i++) {
+            m[i] = -1;
+        }
+        m[0] = nums[0];
+        //m[i] 为前i个元素对应的 目标值
+        //expect m[nums.length]
+        dp(nums, nums.length - 1, m);
+        return m[nums.length - 1];
+    }
+
+    private int dp(int[] nums, int idx, int[] m) {
+        //base case
+        if (idx == 0) {
+            m[0] = nums[0];
+            return nums[0];
+        }
+        if (idx == 1) {
+            m[1] = Math.max(nums[0], nums[1]);
+            return m[1];
+        }
+        // cache
+        if (m[idx] != -1) {
+            return m[idx];
+        }
+        int r = Math.max(dp(nums, idx-2, m) + nums[idx], // m[i-2] + nums[i] 
+                dp(nums, idx-1, m));// m[i-1]
+        m[idx] = r;
+        return m[idx];
+        
+    }
+
 
 
 ### UniquePaths
@@ -2794,6 +2851,43 @@ Given a set of distinct integers, nums, return all possible subsets
         for (int i = 0; i < 2; i++) {
             path[depth] = i;
             backtrack(depth + 1, length, nums, path, subsets);
+        }
+    }
+
+### Permutations2
+输入数组里可以有重复元素
+
+
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> r = new ArrayList<List<Integer>>();
+        if (nums == null || nums.length == 0) {
+            return r;
+        }
+        boolean[] used = new boolean[nums.length];
+        List<Integer> list = new ArrayList<Integer>();
+        Arrays.sort(nums);
+        dfs(nums, used, list, r);
+        return r;
+    }
+    
+    public void dfs(int[] nums, boolean[] used, List<Integer> path, List<List<Integer>> r) {
+        if (path.size() == nums.length) {
+            r.add(new ArrayList<Integer>(path));
+            return;
+        }
+        
+        for (int i = 0; i < nums.length; i++) {
+            if (used[i]) {
+                continue;
+            }
+            if (i > 0 && nums[i - 1] == nums[i] && !used[i - 1]) {
+                continue;
+            }
+            used[i] = true;
+            path.add(nums[i]);
+            dfs(nums, used, path, r);
+            used[i] = false;
+            path.remove(path.size() - 1);
         }
     }
 
