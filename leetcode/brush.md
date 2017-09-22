@@ -2855,6 +2855,9 @@ Given a set of distinct integers, nums, return all possible subsets
     }
 
 ### Permutations2
+
+
+
 输入数组里可以有重复元素
 
 
@@ -3278,3 +3281,67 @@ base case1: rList.size == m*n, base case2: 一行，输出该行return，base ca
 	        }
 	        return r;
 	    }
+
+
+### LongestConsecutiveSequence
+给定未排序的数组，求最长连续元素序列的长度。
+Given [100, 4, 200, 1, 3, 2],
+The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
+hulu 的出题法：在一部电视剧中，如果有几集文件损坏了导致无法播放，
+那么从任意一集没有损坏的视频开始观看，用户最多可以连续看多少集？
+
+
+    public int longestConsecutive(int[] nums) {
+        int res = 0;
+        Set<Integer> s = new HashSet<Integer>();
+        for (int num : nums) {
+            s.add(num);
+        }
+        for (int num : nums) {
+            if (s.remove(num)) {
+                int pre = num - 1, next = num + 1;
+                while (s.remove(pre)) {
+                    --pre;
+                }
+                while (s.remove(next)) {
+                    ++next;
+                }
+                res = Math.max(res, next - pre - 1);
+            }
+        }
+        return res;
+    }
+
+
+    public int longestConsecutiveHulu(int[] nums) {
+        // 找最大元素max
+        int max = Integer.MIN_VALUE;
+        for (int e : nums) {
+            max = (e > max) ? e : max;
+        }
+        int[] m = new int[max + 1];
+        
+        for (int i = 0; i < nums.length; i++) {
+            m[nums[i]] = 1;
+        }
+        
+        return maxConsecutive(m);
+    }
+
+    
+    private int maxConsecutive(int[] m) {
+        int start = -1;
+        int maxlen = 1;
+        for (int i = 0; i < m.length; i++) {
+            if (m[i] == 0) {
+                continue;
+            }
+            if (i == 0 || m[i - 1] == 0) {
+                start = i;
+            }
+            if (i > 0 && m[i - 1] == 1) {
+                maxlen = Math.max(i - start + 1, maxlen);
+            }
+        }
+        return maxlen;
+    }
