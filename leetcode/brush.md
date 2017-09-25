@@ -20,6 +20,30 @@ http://www.cnblogs.com/grandyang/p/5628836.html
 
 
 
+### UTF8Validation
+A character in UTF8 can be from 1 to 4 bytes long, subjected to the following rules:
+
+
+	    For 1-byte character, the first bit is a 0, followed by its unicode code.
+	    For n-bytes character, the first n-bits are all one's, the n+1 bit is 0, followed by n-1 bytes with most significant 2 bits being 10.
+
+	    public boolean validUtf8(int[] data) {
+	        int cnt = 0;
+	        for (int d : data) {
+	            if (cnt == 0) {
+	                if ((d >> 5) == 0b110) cnt = 1;
+	                else if ((d >> 4) == 0b1110) cnt = 2;
+	                else if ((d >> 3) == 0b11110) cnt = 3;
+	                else if (d >> 7 == 1) return false;
+	            } else {
+	                if ((d >> 6) != 0b10) return false;
+	                --cnt;
+	            }
+	        }
+	        return cnt == 0;
+	    }
+
+
 ### HammingDistance
 
     public int hammingDistance(int x, int y) {
@@ -230,6 +254,65 @@ http://www.cnblogs.com/grandyang/p/5628836.html
 
 
 ## Stack
+
+### StackWash / StackPermute
+给定入栈序列 input，每个元素可以入栈出栈一次，判断 outSeq 是否为合法的出栈序列
+
+	    /**
+	     * 给定入栈序列 input，每个元素可以入栈出栈一次，判断 outSeq 是否为合法的出栈序列
+	     * eg. input=[1,2,3,4,5], out1 = [4,5,2,3,1] 不合法
+	     * out2 = [4,5,3,2,1] 合法
+	     * */
+	    public boolean isStackPermute(List<Integer> input, List<Integer> outSeq) {
+	        int i = 0;
+	        Deque<Integer> stack = new LinkedList<>();
+	        for (int e : outSeq) {
+	            if (i >= input.size() && !stack.isEmpty() && stack.peek() != e) {
+	                return false;
+	            }
+	            
+	            while (stack.isEmpty() || stack.peek() != e) {
+	                stack.push(input.get(i++));
+	            }
+	            // while ends with stack.peek() == e
+	            stack.pop();
+	        }
+	        return true;
+	    }
+	
+	
+	    public List<List<Integer>> stackPermute(List<Integer> input) {
+	        List<List<Integer>> r = Lists.newArrayList();
+	        List<Integer> path = Lists.newArrayList();
+	        Deque<Integer> stack = new LinkedList<>();
+	        backtrack(input, stack, r, path, input.size());
+	        return r;
+	    }
+	
+	    private void backtrack(List<Integer> input, Deque<Integer> stack, List<List<Integer>> r, List<Integer> path, int n) {
+	        // base case: input empty&& stack empty
+	        if (path.size() == n) {
+	            r.add(new ArrayList<>(path));
+	            return ;
+	        }
+	        
+	        if (!input.isEmpty()) {
+	            Integer e = input.remove(0);
+	            stack.push(e);
+	            backtrack(input, stack, r, path, n);
+	            stack.pop();
+	            input.add(0, e);
+	        }
+	        if (!stack.isEmpty()) {
+	            Integer e = stack.pop();
+	            path.add(e);
+	            backtrack(input, stack, r, path, n);
+	            path.remove(path.size() - 1);
+	            stack.push(e);
+	        }
+	        
+	    }
+
 
 
 ### SimplifyPath
