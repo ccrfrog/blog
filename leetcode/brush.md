@@ -753,6 +753,54 @@ Given a string, find the first non-repeating character in it and return it's ind
 
 ## 链表 LinkedList
 
+### ReverseNodesinkGroup
+给定一个链表和数字k，每次将链表反转k 个元素，返回修改后的链表。如果剩余的部分长度小于 k 则保持不变
+例如，`1->2->3->4->5->null` 
+`k = 2, expected: 2->1->4->3->5`
+`k = 3, expected = 3->2->1->4->5`
+
+
+
+	    public ListNode reverseKGroup(ListNode head, int k) {
+	        int len = length(head);
+	        if (len < k) {
+	            return head;
+	        }
+	        
+	        ListNode sentinel = new ListNode(0);
+	        sentinel.next = head;
+	        ListNode p = sentinel;
+	        for (int i = 0; i < k; i++) {
+	            p = p.next;
+	        }// p ends at k node
+	        ListNode rest = p.next;
+	        p.next = null;// 断开原来的连接
+	        
+	        ListNode newHead = reverse(head, null);
+	        head.next = reverseKGroup(rest, k);
+	        return newHead;
+	    } 
+	
+	    private ListNode reverse(ListNode head, ListNode newHead) {
+	        if (head == null) {
+	            return newHead;
+	        }
+	        ListNode next = head.next;
+	        head.next = newHead;
+	        return reverse(next, head);
+	    }
+	    
+	    private int length(ListNode head) {
+	        int n = 0; 
+	        ListNode p = head;
+	        while (p != null) {
+	            n++;
+	            p = p.next;
+	        }
+	        return n;
+	    }
+
+
 
 ### SwapNodesinPairs
 Given a linked list, swap every two adjacent nodes and return its head.
@@ -790,7 +838,26 @@ Sort a linked list in O(n log n) time using constant space complexity
 	    /**
 	     * divide: 找中间元素 mid
 	     * conquer: mergeSort(head, mid)
-	     *          mergeSort(mid.next, tail)
+	     *          mergeSort(mid.
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          
+	     *          , tail)
 	     * combine: 归并两个已经有序的linked list
 	     * */
 	    public ListNode sortList(ListNode head) {
@@ -2638,6 +2705,61 @@ n is a non-negative integer and fits within the range of a 32-bit signed integer
 
 
 ## Backtracking
+
+### NextPermutation
+给定一个长度为n 的排列，求下一个排列
+
+
+	    /**
+	     * 观察生成排列算法的解空间：排列树，根据 排列树的特点
+	     * 1. 从后向前找第一个下降的元素e
+	     * 2. 从后向前找第一个比e 大的元素 x
+	     * 3. 交换 e, x
+	     * 4. 将x 后边的数字从小到大排列 即可
+	     * */
+	    public void nextPermutation(int[] nums) {
+	        if (nums.length <= 1) {
+	            return;
+	        }
+	
+	        int i = nums.length - 1;
+	
+	        for (; i >= 1; i--) {
+	            if (nums[i] > nums[i - 1]) { //find first number which is smaller than it's after number
+	                break;
+	            }
+	        }
+	
+	        if (i != 0) {
+	            swap(nums, i - 1); //if the number exist,which means that the nums not like{5,4,3,2,1}
+	        }
+	
+	        reverse(nums, i);
+	    }
+	
+	    private void swap(int[] a, int i) {
+	        for (int j = a.length - 1; j > i; j--) {
+	            if (a[j] > a[i]) {
+	                int t = a[j];
+	                a[j] = a[i];
+	                a[i] = t;
+	                break;
+	            }
+	        }
+	    }
+	
+	    private void reverse(int[] a, int i) {//reverse the number after the number we have found
+	        int first = i;
+	        int last = a.length - 1;
+	        while (first < last) {
+	            int t = a[first];
+	            a[first] = a[last];
+	            a[last] = t;
+	            first++;
+	            last--;
+	        }
+	    }
+
 
 ### BattleshipsinaBoard
 给定二维数组，计算其中 battleship 个数。battleship 由 x 表示，空位用. 表示，约束条件如下
