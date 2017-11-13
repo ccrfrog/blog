@@ -1,16 +1,137 @@
 
-
-
-
-
-
-
-
-
-
-
 http://www.cnblogs.com/grandyang/p/5628836.html
 
+
+
+## Tree
+
+
+
+### BinaryTreePostorderTraversal
+二叉树的后序遍历，非递归
+
+    // preorder: root-left-right => root-right-left
+    // 使用与preorder 相似的代码 + 一个 linkedlist 实现反转
+    // expected postorder: left-right-root
+    public List<Integer> postorderTraversal(TreeNode root) {
+        LinkedList<Integer> list = new LinkedList<Integer>();
+        if (root == null) { return list; }
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode top = stack.pop();
+            list.addFirst(top.val);
+            if (top.left != null) {
+                stack.push(top.left);
+            }
+            if (top.right != null) {
+                stack.push(top.right);
+            }
+        }
+        return list;
+    }
+
+
+### BinaryTreeInorderTraversal
+二叉树的中序遍历，非递归
+
+    /**
+     * 非递归中序：
+     * p不为 null 时向左走到头，出栈时表示左子树遍历完，访问root，然后指针指向右子树 继续下个循环
+     * */
+    public List<Integer> inorderTraversalNonRecursive20171113(TreeNode root) {
+        List<Integer> list = new ArrayList<Integer>();
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        TreeNode p = root;
+        
+        while (p != null || !stack.isEmpty()) {
+            if (p != null) {
+                stack.push(p);
+                p = p.left;
+            } else {
+                p = stack.pop();
+                list.add(p.val);
+                p = p.right;
+            }
+        }
+        return list;
+    }
+
+
+
+### BinaryTreePreorderTraversal
+二叉树的先序遍历，非递归
+
+    // 非递归
+    public List<Integer> preorderTraversalNonRecursive(TreeNode root) {
+        List<Integer> list = new ArrayList<Integer>();
+        if (root == null) {
+            return list;
+        }
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode top = stack.pop();
+            list.add(top.val);
+            if (top.right != null) {
+                stack.push(top.right);
+            }
+            if (top.left != null) {
+                stack.push(top.left);
+            }
+        }
+        return list;
+    }
+
+
+### ConstructBinaryTreefromString
+从字符串构造二叉树，例如
+
+		Input: "4(2(3)(1))(6(5))"
+		Output: return the tree root node representing the following tree:
+		
+		       4
+		     /   \
+		    2     6
+		   / \   / 
+		  3   1 5
+
+	
+	    public TreeNode construct(String s) {
+	        // base case: s empty or s = 单个数字
+	        if (s == null || s.length() == 0) {
+	            return null;
+	        }
+	        if (DIGITS.matcher(s).matches()) {
+	            return new TreeNode(Integer.valueOf(s));
+	        }
+	        
+	        // 创建 root，然后分别找 左右子树
+	        int leftStart = 0; int leftEnd = 0;
+	        leftStart = s.indexOf('(');
+	        
+	        String head = s.substring(0, leftStart);
+	        TreeNode root = new TreeNode(Integer.valueOf(head));
+	        Deque<Character> stack = new LinkedList<>();
+	        for (int i = 0; i < s.length(); i++) {
+	            char c = s.charAt(i);
+	            if (c == '(') {
+	                stack.push(c);
+	            } else if (c == ')') {
+	                stack.pop();
+	                if (stack.isEmpty()) {
+	                    leftEnd = i;
+	                    break;
+	                }
+	            }
+	        }
+	        
+	        String leftChild = s.substring(leftStart + 1, leftEnd);
+	        String rightChild = (leftEnd < s.length() - 1) ? s.substring(leftEnd + 2, s.length() - 1) : "";
+	        root.left = construct(leftChild);
+	        root.right = construct(rightChild);
+	        return root;
+	    }
 
 
 
