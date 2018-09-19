@@ -13,7 +13,7 @@
 2. 一般不删除元素，直接覆盖
 
 
-## 基本子程序
+## 基本子程序和常用技巧
 1. 快速排序的partition 函数，原地将数组A划分成三部分：小于pivot 元素部分，pivot和大于pivot元素部分；
 返回pivot 元素的位置
 
@@ -45,8 +45,33 @@
 		            next_odd -= 1
 		
 
-
 使用到该技巧的题有：`SortColors`
 
 
+3. 处理首尾下标和避免越界的写法：例如想表达 `fb[i-1]==0` 且 `fb[i+1]==0`，当`i=0`或者`i=length-1`时
+前两个表达式会下标越界，实际上当`i=0`时只需要考虑`fb[i+1]`，当`i=length-1`时只需要考虑`fb[i-1]`
+正确的写法是python版： `(i == 0 or flowerbed[i-1] == 0) and (i == length - 1 or flowerbed[i+1] == 0)`
 
+用到该写法的题有：`CanPlaceFlowers`
+
+4. 二维数组处理边界元素的写法：
+
+	
+		for nr in (r-1, r, r+1):  #变量r 为当前行数
+			if 0 <= nr < R and 0 <= nc < C:# 其中R,C 分别是行数，列数
+				pass
+
+
+用到该写法的题有：`ImageSmoother`
+
+
+5. 前缀和(prefix sum)技巧：预处理时先求从n[0] 到 n[k] 的累加和sum[k]，在sum[n]的基础上做其它计算
+
+	
+		for (int i = 0; i < nums.length; i++) {
+			sum[i + 1] = sum[i] + nums[i];
+		}
+
+用到该技巧的题有： `RangeSumQueryImmutable`
+
+ 
