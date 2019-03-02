@@ -74,4 +74,3 @@
 
 用到该技巧的题有： `RangeSumQueryImmutable`
 
- 
